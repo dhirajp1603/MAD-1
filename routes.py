@@ -85,45 +85,33 @@ def profile():
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
         if request.method == 'POST':
-            # Update user attributes
             user.name = request.form['name']
-            new_username = request.form['username']
+            username = request.form['username']
+            user.username = username
             Cpassword = request.form['Cpassword']
             password = request.form['password']
             confirm_password = request.form['confirm_password']
-
-            # Check if passwords match
             if password != confirm_password:
                 flash('Passwords do not match. Please try again.', 'danger')
                 return redirect(url_for('profile'))
-
-            # Validate current password
             if check_password_hash(user.password, Cpassword):
-                # Update password if a new one is provided
-                if password:  # Only update if a new password was provided
-                    user.password = generate_password_hash(password, method='pbkdf2:sha256')
-
-                # Check for username uniqueness
-                if new_username != user.username:
-                    existing_user = User.query.filter_by(username=new_username).first()
-                    if existing_user:
-                        flash('Username already exists. Please choose a different one.', 'danger')
-                        return redirect(url_for('profile'))
-
-                    # Update username if it's unique
-                    user.username = new_username
-
-                # Commit changes to the database
+                user.password = generate_password_hash(password, method='pbkdf2:sha256')
                 db.session.commit()
                 flash('Profile updated successfully.', 'success')
             else:
                 flash('Current password is incorrect. Please try again.', 'danger')
-
+            if username != user.username:
+                existing_user = User.query.filter_by(username=username).first()
+                if existing_user:
+                    flash('Username already exists. Please choose a different one.', 'danger')
+                    return redirect(url_for('profile'))
+                user.username = username
+                db.session.commit()
+                flash('Profile updated successfully.', 'success')
         return render_template('profile.html', user=user)
     else:
         flash('Please log in to access the application.', 'info')
         return redirect(url_for('login'))
-
     
 @app.route('/logout')
 def logout():
@@ -131,3 +119,18 @@ def logout():
     session.pop('user_role', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
+
+@app.route('/admin')
+def admin_dashboard():
+    from models import User
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user.is_admin:
+            return render_template('admin_dashboard.html', user=user)
+        else:
+            flash('You do not have permission to access this page.', 'danger')
+            return redirect(url_for('index'))
+    else:
+        flash('Please log in to access the application.', 'info')
+        return redirect(url_for('login'))
+    
