@@ -1,4 +1,5 @@
 from app import db, app
+from werkzeug.security import generate_password_hash
 
 # User model representing all users (Admin, Service Professionals, Customers)
 class User(db.Model):
@@ -31,17 +32,23 @@ class ServiceRequest(db.Model):
     service_status = db.Column(db.String(50), nullable=False)  # e.g., 'requested', 'assigned', 'closed'
     remarks = db.Column(db.Text, nullable=True)
 
-    Review = db.relationship('Review', backref='service_request', lazy=True)
-
+    reviews = db.relationship('Review', backref='service_request', lazy=True)  # Corrected relationship
 
 # Review model for customer feedback on services
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)  # Added foreign key to Service
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)  # e.g., 1 to 5
     comment = db.Column(db.Text, nullable=True)
 
-
 with app.app_context():
     db.create_all()
+    #if admin user doesn't exist, create one
+    admin = User.query.filter_by(is_admin=True).first()
+    if not admin:
+        password = generate_password_hash('admin')
+        admin = User(username='admin', password=password, name='Admin', is_admin=True, role='admin')
+        db.session.add(admin)
+        db.session.commit()
