@@ -6,16 +6,24 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            
+            {% if 'user_id' in session %}
             <div class="navbar-nav me-auto"> <!-- Align items to the left -->
                 <a class="nav-link btn btn-outline-primary me-2" href="{{ url_for('index') }}">Home</a>
                 <a class="nav-link btn btn-outline-primary me-2" href="#">Services</a>
                 <a class="nav-link btn btn-outline-primary me-2" href="#">Pricing</a>
+                <a class="nav-link btn btn-outline-primary me-2" href="{{ url_for('profile') }}">Profile</a>
+                <a class="nav-link btn btn-outline-primary" href="{{ url_for('logout') }}">Logout</a>
             </div>
+            {% else %}
+            <div class="navbar-nav me-auto"></div>
             <div class="navbar-nav"> <!-- Right-aligned login and register buttons -->
                 <a class="nav-link btn btn-outline-primary me-2" href="{{ url_for('login') }}">Login</a>
                 <a class="nav-link btn btn-outline-primary" href="{{ url_for('register') }}">Register</a>
             </div>
+            {% endif %}
+            
+            
+            
         </div>
     </div>
 </nav>
