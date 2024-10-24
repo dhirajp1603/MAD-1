@@ -134,3 +134,45 @@ def admin_dashboard():
         flash('Please log in to access the application.', 'info')
         return redirect(url_for('login'))
     
+@app.route('/admin/user_management')
+def user_management():
+    from models import User
+    users = User.query.all()
+    return render_template('user_management.html', users=users)
+
+@app.route('/admin/block_user/<int:user_id>', methods=['POST'])
+def block_user(user_id):
+    from models import User
+    user = User.query.get(user_id)
+    if user and not user.is_admin:
+        user.is_blocked = True
+        db.session.commit()
+    return redirect(url_for('user_management'))
+
+@app.route('/admin/unblock_user/<int:user_id>', methods=['POST'])
+def unblock_user(user_id):
+    from models import User
+    user = User.query.get(user_id)
+    if user and not user.is_admin:
+        user.is_blocked = False
+        db.session.commit()
+    return redirect(url_for('user_management'))
+
+@app.route('/admin/approve_professional/<int:professional_id>', methods=['POST'])
+def approve_professional(professional_id):
+    from models import User
+    professional = User.query.get(professional_id)
+    if professional and professional.role == 'pending':  # Change from 'professional' to 'pending'
+        professional.role = 'professional'  # Set the role to 'professional'
+        db.session.commit()
+    return redirect(url_for('user_management'))
+
+@app.route('/admin/reject_professional/<int:professional_id>', methods=['POST'])
+def reject_professional(professional_id):
+    from models import User
+    professional = User.query.get(professional_id)
+    if professional and professional.role == 'pending':  # Ensure they are pending approval
+        db.session.delete(professional)  # Remove the professional if rejected
+        db.session.commit()
+    return redirect(url_for('user_management'))
+

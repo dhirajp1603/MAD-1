@@ -8,7 +8,9 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)  # True if admin
-    role = db.Column(db.String(50), nullable=False)  # 'customer' or 'professional'
+    role = db.Column(db.String(50), nullable=False)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    is_blocked = db.Column(db.Boolean, default=False, nullable=False)
 
 # Service model for defining services offered
 class Service(db.Model):

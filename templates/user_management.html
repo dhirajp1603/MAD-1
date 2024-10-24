@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    User Management - Admin Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">User Management</h2>
+    
+    <!-- User Table -->
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.role|capitalize }}</td>
+                <td>
+                    {% if user.is_admin %}
+                        <span class="badge bg-primary">Admin</span>
+                    {% elif user.is_blocked %}
+                        <span class="badge bg-danger">Blocked</span>
+                    {% elif user.role == 'pending' %}
+                        <span class="badge bg-warning">Pending Approval</span>
+                    {% elif user.role == 'professional' %}
+                        <span class="badge bg-success">Verified</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Active</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Block/Unblock Button -->
+                    {% if not user.is_admin %}
+                        {% if not user.is_blocked %}
+                            <form action="{{ url_for('block_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Block</button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('unblock_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-warning">Unblock</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Approve/Reject Professional Buttons -->
+                    {% if user.role == 'pending' %}
+                        <form action="{{ url_for('approve_professional', professional_id=user.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                        </form>
+                        <form action="{{ url_for('reject_professional', professional_id=user.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
