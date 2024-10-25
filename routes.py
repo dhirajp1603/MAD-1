@@ -293,6 +293,7 @@ def reject_professional(id):
     flash("Professional rejected and removed from pending list.", "info")
     return redirect(url_for('pending_approval_list'))
 
+
 @app.route('/admin/view_professionals')
 def view_professionals():
     from models import ServiceProfessional
