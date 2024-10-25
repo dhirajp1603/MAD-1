@@ -1,54 +1,100 @@
 from app import db, app
 from werkzeug.security import generate_password_hash
+from datetime import datetime
 
-# User model representing all users (Admin, Service Professionals, Customers)
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+def generate_professional_id():
+    last_professional = ServiceProfessional.query.order_by(ServiceProfessional.professional_id.desc()).first()
+    if last_professional:
+        last_id = int(last_professional.professional_id.replace("PRO", ""))
+        new_id = f"PRO{last_id + 1}"
+    else:
+        new_id = "PRO1"
+    return new_id
+
+def generate_customer_id():
+    last_customer = Customer.query.order_by(Customer.customer_id.desc()).first()
+    if last_customer:
+        last_id = int(last_customer.customer_id.replace("CUS", ""))
+        new_id = f"CUS{last_id + 1}"
+    else:
+        new_id = "CUS1"
+    return new_id
+
+class Admin(db.Model):
+    __tablename__ = 'admins'
+    admin_id = db.Column(db.String(100), primary_key=True, default="AD1")  # Single Admin
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)
-    name = db.Column(db.String(120), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)  # True if admin
-    role = db.Column(db.String(50), nullable=False)  # 'customer' or 'professional'
+    password = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True)
 
-# Service model for defining services offered
+class ServiceProfessional(db.Model):
+    __tablename__ = 'service_professionals'
+    professional_id = db.Column(db.String(100), primary_key=True, default=generate_professional_id)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    service_type = db.Column(db.String(100), nullable=False)
+    experience = db.Column(db.Integer)
+    description = db.Column(db.Text)
+    is_blocked = db.Column(db.Boolean, default=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    reviews = db.relationship('Review', backref='professional', cascade="all, delete-orphan")
+
+class Customer(db.Model):
+    __tablename__ = 'customers'
+    customer_id = db.Column(db.String(100), primary_key=True, default=generate_customer_id)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    is_blocked = db.Column(db.Boolean, default=False)
+    service_requests = db.relationship('ServiceRequest', backref='customer', cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='customer', cascade="all, delete-orphan")
+
 class Service(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    __tablename__ = 'services'
+    service_id = db.Column(db.String(100), primary_key=True, default="SER1")
+    name = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    time_required = db.Column(db.String(50), nullable=False)  # e.g., '2 hours'
-    description = db.Column(db.Text, nullable=True)
+    time_required = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    service_requests = db.relationship('ServiceRequest', backref='service', cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='service', cascade="all, delete-orphan")
 
-    service_requests = db.relationship('ServiceRequest', backref='service', lazy=True)
-    reviews = db.relationship('Review', backref='service', lazy=True)
-
-# Service Request model representing requests from customers
 class ServiceRequest(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    professional_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional initially
-    date_of_request = db.Column(db.DateTime, nullable=False)
-    date_of_completion = db.Column(db.DateTime, nullable=True)
-    service_status = db.Column(db.String(50), nullable=False)  # e.g., 'requested', 'assigned', 'closed'
-    remarks = db.Column(db.Text, nullable=True)
+    __tablename__ = 'service_requests'
+    request_id = db.Column(db.String(100), primary_key=True, default="REQ1")
+    service_id = db.Column(db.String(100), db.ForeignKey('services.service_id'), nullable=False)
+    customer_id = db.Column(db.String(100), db.ForeignKey('customers.customer_id'), nullable=False)
+    professional_id = db.Column(db.String(100), db.ForeignKey('service_professionals.professional_id'), nullable=True)
+    date_of_request = db.Column(db.DateTime, default=datetime.utcnow)
+    date_of_completion = db.Column(db.DateTime)
+    service_status = db.Column(db.String(50), nullable=False)
+    remarks = db.Column(db.Text)
+    reviews = db.relationship('Review', backref='service_request', cascade="all, delete-orphan")
 
-    reviews = db.relationship('Review', backref='service_request', lazy=True)  # Corrected relationship
-
-# Review model for customer feedback on services
 class Review(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)  # Added foreign key to Service
-    customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)  # e.g., 1 to 5
-    comment = db.Column(db.Text, nullable=True)
+    __tablename__ = 'reviews'
+    review_id = db.Column(db.String(100), primary_key=True, default="REV1")
+    request_id = db.Column(db.String(100), db.ForeignKey('service_requests.request_id'), nullable=False)
+    service_id = db.Column(db.String(100), db.ForeignKey('services.service_id'), nullable=False)
+    customer_id = db.Column(db.String(100), db.ForeignKey('customers.customer_id'), nullable=False)
+    professional_id = db.Column(db.String(100), db.ForeignKey('service_professionals.professional_id'), nullable=True)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
     #if admin user doesn't exist, create one
-    admin = User.query.filter_by(is_admin=True).first()
+    admin = Admin.query.filter_by(admin_id="AD1").first()
     if not admin:
         password = generate_password_hash('admin')
-        admin = User(username='admin', password=password, name='Admin', is_admin=True, role='admin')
+        admin = Admin(username='admin', password=password, name='Admin')
         db.session.add(admin)
         db.session.commit()
+                      

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}Professional Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Professional Dashboard</h2>
+    <p>Here you can manage your services and view requests from customers.</p>
+    
+    <!-- Add additional content like service management, requests, etc. -->
+    <div class="mt-4">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block title %}Register - Household Services{% endblock %}
+
+{% block content %}
+    <h2>Register as</h2>
+    <a href="{{ url_for('register_customer') }}" class="btn btn-primary">Customer</a>
+    <a href="{{ url_for('register_service_professional') }}" class="btn btn-secondary">Service Professional</a>
+{% endblock %}
