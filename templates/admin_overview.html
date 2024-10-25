@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}Platform Overview - Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>Platform Overview</h2>
+<div class="overview-stats">
+    <p><strong>Total Users:</strong> {{ num_users }}</p>
+    <p><strong>Total Services:</strong> {{ num_services }}</p>
+    <p><strong>Total Bookings:</strong> {{ total_bookings }}</p>
+    <p><strong>Total Revenue:</strong> Rs.{{ total_revenue }}</p>
+    <p><strong>Blocked Users:</strong> {{ blocked_users }}</p>
+    <p><strong>Approved Professionals:</strong> {{ approved_professionals }}</p>
+</div>
+
+<div id="chart-container">
+    <h3>Activity Overview Graphs</h3>
+    <!-- Example placeholder for graphs -->
+    <canvas id="user-chart"></canvas>
+    <canvas id="booking-chart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // JavaScript for rendering charts with Chart.js
+    const userChart = new Chart(document.getElementById('user-chart'), {
+        type: 'pie',
+        data: {
+            labels: ['Active Users', 'Blocked Users'],
+            datasets: [{
+                data: [{{ num_users - blocked_users }}, {{ blocked_users }}],
+                backgroundColor: ['#36a2eb', '#ff6384'],
+            }]
+        }
+    });
+
+    const bookingChart = new Chart(document.getElementById('booking-chart'), {
+        type: 'bar',
+        data: {
+            labels: ['Bookings', 'Revenue'],
+            datasets: [{
+                label: 'Platform Activity',
+                data: [{{ total_bookings }}, {{ total_revenue }}],
+                backgroundColor: ['#4caf50', '#ffcd56']
+            }]
+        }
+    });
+</script>
+{% endblock %}
