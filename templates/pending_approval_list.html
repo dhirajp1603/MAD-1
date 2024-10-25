@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}Pending Approvals{% endblock %}
+
+{% block content %}
+    <h2>Pending Professionals for Approval</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Service Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professional in pending_professionals %}
+                <tr>
+                    <td>{{ professional.name }}</td>
+                    <td>{{ professional.username }}</td>
+                    <td>{{ professional.email }}</td>
+                    <td>{{ professional.service_type }}</td>
+                    <td>
+                        <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success">Approve</a>
+                        <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger">Reject</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

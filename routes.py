@@ -109,7 +109,7 @@ def customerregister_post():
 # Service Professional Registration
 @app.route("/professionalregister", methods=["POST"])
 def professionalregister_post():
-    from models import ServiceProfessional  # Import the models here
+    from models import PendingApproval, ServiceProfessional  # Import the PendingApproval model here
     username = request.form.get("username")
     password = request.form.get("password")
     confirmpassword = request.form.get("confirmpassword")
@@ -119,6 +119,7 @@ def professionalregister_post():
     experience = request.form.get("experience")
     description = request.form.get("description")
 
+    # Validate form inputs
     if not (username and password and confirmpassword and name and service_type):
         flash("Please fill out all required fields", 'danger')
         return redirect(url_for("register_service_professional"))
@@ -127,15 +128,17 @@ def professionalregister_post():
         flash("Password and confirm password do not match", 'danger')
         return redirect(url_for("register_service_professional"))
     
-    # Check if username or email already exists
-    if ServiceProfessional.query.filter_by(username=username).first() or ServiceProfessional.query.filter_by(email=email).first():
+    # Check if username or email already exists in ServiceProfessional or PendingApproval
+    if (ServiceProfessional.query.filter_by(username=username).first() or 
+        ServiceProfessional.query.filter_by(email=email).first() or
+        PendingApproval.query.filter_by(username=username).first() or
+        PendingApproval.query.filter_by(email=email).first()):
         flash("Username or Email already exists", 'danger')
         return redirect(url_for("register_service_professional"))
     
-    # Create new service professional
+    # Create new pending approval entry
     password_hash = generate_password_hash(password)
-    new_professional = ServiceProfessional(
-        professional_id=generate_professional_id(),
+    new_pending_professional = PendingApproval(
         username=username,
         password=password_hash,
         name=name,
@@ -144,9 +147,10 @@ def professionalregister_post():
         experience=experience,
         description=description
     )
-    db.session.add(new_professional)
+    db.session.add(new_pending_professional)
     db.session.commit()
-    flash("Service Professional registered successfully", 'success')
+    
+    flash("Service Professional registered successfully and is awaiting approval", 'success')
     return redirect(url_for("login_service_professional"))
 
 # Customer Login
@@ -197,3 +201,93 @@ def logout():
     session.pop('user_id', None)
     flash("Logged out successfully", 'info')
     return redirect(url_for("index"))
+
+@app.route('/login_admin', methods=['GET', 'POST'])
+def login_admin():
+    from models import Admin
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        admin = Admin.query.filter_by(username=username).first()
+        
+        if admin and check_password_hash(admin.password, password):
+            session['admin_logged_in'] = True
+            flash('Welcome, Admin!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid username or password', 'danger')
+            
+    return render_template('login_admin.html')  # Create this template for admin login form
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if not session.get('admin_logged_in'):
+        flash('Please log in as admin to access the dashboard', 'warning')
+        return redirect(url_for('login_admin'))
+    return render_template('admin_dashboard.html')
+
+@app.route('/monitor_customers')
+def monitor_customers():
+    from models import Customer
+    customers = Customer.query.all()  # Fetch all customers
+    return render_template('monitor_customers.html', customers=customers)
+
+@app.route('/toggle_block/<string:customer_id>')
+def toggle_block(customer_id):
+    from models import Customer
+    customer = Customer.query.get(customer_id)
+    if customer:
+        customer.is_blocked = not customer.is_blocked  # Toggle block status
+        db.session.commit()
+        status = "blocked" if customer.is_blocked else "unblocked"
+        flash(f'Customer {customer.name} has been {status}.', 'success')
+    else:
+        flash('Customer not found.', 'danger')
+    return redirect(url_for('monitor_customers'))
+
+@app.route('/pending_approval_list')
+def pending_approval_list():
+    from models import PendingApproval
+    pending_professionals = PendingApproval.query.all()
+    return render_template('pending_approval_list.html', pending_professionals=pending_professionals)
+
+@app.route('/approve_professional/<int:id>')
+def approve_professional(id):
+    from models import PendingApproval, ServiceProfessional
+    pending_professional = PendingApproval.query.get(id)
+    if not pending_professional:
+        flash("Professional not found", "danger")
+        return redirect(url_for('pending_approval_list'))
+
+    # Approve and move to ServiceProfessional
+    new_professional = ServiceProfessional(
+        professional_id=generate_professional_id(),
+        username=pending_professional.username,
+        password=pending_professional.password,
+        name=pending_professional.name,
+        email=pending_professional.email,
+        service_type=pending_professional.service_type,
+        experience=pending_professional.experience,
+        description=pending_professional.description
+    )
+    db.session.add(new_professional)
+    db.session.delete(pending_professional)
+    db.session.commit()
+
+    flash("Professional approved.", "success")
+    return redirect(url_for('pending_approval_list'))
+
+@app.route('/reject_professional/<int:id>')
+def reject_professional(id):
+    from models import PendingApproval
+    pending_professional = PendingApproval.query.get(id)
+    if not pending_professional:
+        flash("Professional not found", "danger")
+        return redirect(url_for('pending_approval_list'))
+
+    # Delete the entry from PendingApproval
+    db.session.delete(pending_professional)
+    db.session.commit()
+
+    flash("Professional rejected and removed from pending list.", "info")
+    return redirect(url_for('pending_approval_list'))

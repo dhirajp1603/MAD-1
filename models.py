@@ -88,6 +88,19 @@ class Review(db.Model):
     comment = db.Column(db.Text)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
+
+class PendingApproval(db.Model):
+    __tablename__ = 'pending_approval'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    service_type = db.Column(db.String(100), nullable=False)
+    experience = db.Column(db.Integer)
+    description = db.Column(db.Text)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
 with app.app_context():
     db.create_all()
     #if admin user doesn't exist, create one
@@ -97,4 +110,3 @@ with app.app_context():
         admin = Admin(username='admin', password=password, name='Admin')
         db.session.add(admin)
         db.session.commit()
-                      
