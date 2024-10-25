@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}Manage Services - Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>Manage Services</h2>
+
+<!-- Create New Service Form -->
+<h3>Create a New Service</h3>
+<form action="{{ url_for('create_service') }}" method="POST">
+    <input type="text" name="name" placeholder="Service Name" required>
+    <input type="number" step="0.01" name="price" placeholder="Price" required>
+    <input type="text" name="time_required" placeholder="Time Required" required>
+    <textarea name="description" placeholder="Description"></textarea>
+    <button type="submit" class="btn btn-primary">Create Service</button>
+</form>
+
+<hr>
+
+<!-- List of Services with Update/Delete Options -->
+<h3>Existing Services</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Time Required</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+        <tr>
+            <td>{{ service.name }}</td>
+            <td>{{ service.price }}</td>
+            <td>{{ service.time_required }}</td>
+            <td>{{ service.description }}</td>
+            <td>
+                <!-- Update Service Form -->
+                <form action="{{ url_for('update_service', service_id=service.service_id) }}" method="POST">
+                    <input type="text" name="name" placeholder="New Name" value="{{ service.name }}" required>
+                    <input type="number" step="0.01" name="price" placeholder="New Price" value="{{ service.price }}" required>
+                    <input type="text" name="time_required" placeholder="New Time Required" value="{{ service.time_required }}" required>
+                    <textarea name="description" placeholder="New Description">{{ service.description }}</textarea>
+                    <button type="submit" class="btn btn-success">Update</button>
+                </form>
+
+                <!-- Delete Service Form -->
+                <form action="{{ url_for('delete_service', service_id=service.service_id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
