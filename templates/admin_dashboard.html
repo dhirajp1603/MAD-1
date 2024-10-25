@@ -10,10 +10,10 @@
         <div class="row text-center">
             <!-- Section: Monitor Customers -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-info h-100">
+                <div class="card shadow border-primary h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h5 class="card-title">Monitor Customers</h5>
-                        <a href="{{ url_for('monitor_customers') }}" class="btn btn-info mt-auto">View Customers</a>
+                        <a href="{{ url_for('monitor_customers') }}" class="btn btn-primary mt-auto">View Customers</a>
                     </div>
                 </div>
             </div>
@@ -30,20 +30,30 @@
 
             <!-- Section: Manage Service Professionals -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-primary h-100">
+                <div class="card shadow border-success h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h5 class="card-title">Manage Service Professionals</h5>
-                        <a href="{{ url_for('view_professionals') }}" class="btn btn-primary mt-auto">Manage Professionals</a>
+                        <a href="{{ url_for('view_professionals') }}" class="btn btn-success mt-auto">Manage Professionals</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Manage Services -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-primary h-100">
+                <div class="card shadow border-info h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h5 class="card-title">Manage Services</h5>
-                        <a href="{{ url_for('view_services') }}" class="btn btn-primary mt-auto">Manage Services</a>
+                        <a href="{{ url_for('view_services') }}" class="btn btn-info mt-auto">Manage Services</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Platform Analytics -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow border-dark h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">Platform Analytics</h5>
+                        <a href="{{ url_for('admin_overview') }}" class="btn btn-dark mt-auto">Overview</a>
                     </div>
                 </div>
             </div>

@@ -369,6 +369,24 @@ def delete_service(service_id):
     flash("Service deleted successfully", 'success')
     return redirect(url_for('view_services'))
 
+
+@app.route('/admin/overview')
+def admin_overview():
+    from models import Customer, Service, ServiceRequest, ServiceProfessional
+    num_users = Customer.query.count()
+    num_services = Service.query.count()
+    total_bookings = ServiceRequest.query.count()
+    total_revenue = db.session.query(db.func.sum(Service.price)).scalar() or 0
+    
+    # Extra queries for blocked users and approved professionals
+    blocked_users = Customer.query.filter_by(is_blocked=True).count()
+    approved_professionals = ServiceProfessional.query.filter_by(is_blocked=False).count()
+    
+    # Pass data to the template for graphs
+    return render_template('admin_overview.html', num_users=num_users, num_services=num_services,
+                           total_bookings=total_bookings, total_revenue=total_revenue,
+                           blocked_users=blocked_users, approved_professionals=approved_professionals)
+
 # Route to view customer dashboard
 @app.route('/customer_dashboard')
 def customer_dashboard():
@@ -481,5 +499,6 @@ def update_customer():
     db.session.commit()
     flash('Profile updated successfully!', 'success')
     return redirect(url_for('customer_dashboard'))
+
 
 
