@@ -1,9 +1,31 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
-{% block title %}Login - Household Services{% endblock %}
+{% block title %}
+    Login
+{% endblock %}
 
 {% block content %}
-    <h2>Login as</h2>
-    <a href="{{ url_for('login_customer') }}" class="btn btn-primary">Customer</a>
-    <a href="{{ url_for('login_service_professional') }}" class="btn btn-secondary">Service Professional</a>
+<div class="container">
+    <h1 class="mt-5 text-center">Login</h1>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Customer Login</h2>
+                    <p class="card-text">Log in to Customer.</p>
+                    <a href="{{ url_for('login_customer') }}" class="btn btn-primary">Login as Customer</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Service Professional Login</h2>
+                    <p class="card-text">Log in to Service Professional.</p>
+                    <a href="{{ url_for('login_service_professional') }}" class="btn btn-primary">Login as Service Professional</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
