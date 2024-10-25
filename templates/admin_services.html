@@ -8,10 +8,18 @@
 <!-- Create New Service Form -->
 <h3>Create a New Service</h3>
 <form action="{{ url_for('create_service') }}" method="POST">
-    <input type="text" name="name" placeholder="Service Name" required>
-    <input type="number" step="0.01" name="price" placeholder="Price" required>
-    <input type="text" name="time_required" placeholder="Time Required" required>
-    <textarea name="description" placeholder="Description"></textarea>
+    <div class="mb-3">
+        <input type="text" name="name" class="form-control" placeholder="Service Name" required>
+    </div>
+    <div class="mb-3">
+        <input type="number" step="0.01" name="price" class="form-control" placeholder="Price" required>
+    </div>
+    <div class="mb-3">
+        <input type="text" name="time_required" class="form-control" placeholder="Time Required" required>
+    </div>
+    <div class="mb-3">
+        <textarea name="description" class="form-control" placeholder="Description"></textarea>
+    </div>
     <button type="submit" class="btn btn-primary">Create Service</button>
 </form>
 
@@ -19,7 +27,7 @@
 
 <!-- List of Services with Update/Delete Options -->
 <h3>Existing Services</h3>
-<table>
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Name</th>
@@ -37,24 +45,39 @@
             <td>{{ service.time_required }}</td>
             <td>{{ service.description }}</td>
             <td>
-                <!-- Button to toggle update and delete forms -->
-                <button type="button" class="btn btn-info" onclick="toggleForms({{ loop.index }})">Edit</button>
+                <div class="d-flex">
+                    <!-- Edit Button -->
+                    <button type="button" class="btn btn-info me-2" onclick="toggleForms('{{ loop.index }}')">Edit</button>
+                    
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-danger" onclick="toggleDelete('{{ loop.index }}')">Delete</button>
+                </div>
 
                 <!-- Update Service Form (initially hidden) -->
                 <div id="update-form-{{ loop.index }}" style="display:none; margin-top: 10px;">
                     <form action="{{ url_for('update_service', service_id=service.service_id) }}" method="POST">
-                        <input type="text" name="name" placeholder="New Name" value="{{ service.name }}" required>
-                        <input type="number" step="0.01" name="price" placeholder="New Price" value="{{ service.price }}" required>
-                        <input type="text" name="time_required" placeholder="New Time Required" value="{{ service.time_required }}" required>
-                        <textarea name="description" placeholder="New Description">{{ service.description }}</textarea>
+                        <div class="mb-3">
+                            <input type="text" name="name" class="form-control" placeholder="New Name" value="{{ service.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="number" step="0.01" name="price" class="form-control" placeholder="New Price" value="{{ service.price }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="time_required" class="form-control" placeholder="New Time Required" value="{{ service.time_required }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="description" class="form-control" placeholder="New Description">{{ service.description }}</textarea>
+                        </div>
                         <button type="submit" class="btn btn-success">Update</button>
                     </form>
                 </div>
 
-                <!-- Delete Service Form (initially hidden) -->
+                <!-- Delete Confirmation Form (initially hidden) -->
                 <div id="delete-form-{{ loop.index }}" style="display:none; margin-top: 10px;">
+                    <p>Are you sure you want to delete this service?</p>
                     <form action="{{ url_for('delete_service', service_id=service.service_id) }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleDelete('{{ loop.index }}')">Cancel</button>
                     </form>
                 </div>
             </td>
@@ -66,8 +89,11 @@
 <script>
 function toggleForms(index) {
     const updateForm = document.getElementById(`update-form-${index}`);
-    const deleteForm = document.getElementById(`delete-form-${index}`);
     updateForm.style.display = updateForm.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleDelete(index) {
+    const deleteForm = document.getElementById(`delete-form-${index}`);
     deleteForm.style.display = deleteForm.style.display === 'none' ? 'block' : 'none';
 }
 </script>
