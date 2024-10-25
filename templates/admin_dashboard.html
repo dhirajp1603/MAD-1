@@ -29,3 +29,24 @@
 
     </div>
 {% endblock %}
+
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Admin Dashboard</h2>
+    <p>Manage the application from this panel.</p>
+
+    <div class="dashboard-sections">
+        <!-- Section: Monitor Customers -->
+        <div class="section">
+            <a href="{{ url_for('monitor_customers') }}" class="btn btn-info">Monitor Customers</a>
+        </div>
+
+        <!-- Section: Pending Approvals -->
+        <div class="section">
+            <a href="{{ url_for('pending_approval_list') }}" class="btn btn-warning">Pending Approvals</a>
+        </div>
+    </div>
+{% endblock %}
