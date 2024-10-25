@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash,check_password_hash
 from app import app, db
+from datetime import datetime
 
 
 # Utility functions for ID generation
@@ -291,3 +292,72 @@ def reject_professional(id):
 
     flash("Professional rejected and removed from pending list.", "info")
     return redirect(url_for('pending_approval_list'))
+
+
+@app.route('/admin/view_professionals')
+def view_professionals():
+    from models import ServiceProfessional
+    professionals = ServiceProfessional.query.all()
+    return render_template('view_professionals.html', professionals=professionals)
+
+# Route to toggle block/unblock status of a professional
+@app.route('/admin/toggle_block/<string:professional_id>', methods=['POST'])
+def toggle_block_professional(professional_id):
+    from models import ServiceProfessional
+    professional = ServiceProfessional.query.get_or_404(professional_id)
+    professional.is_blocked = not professional.is_blocked
+    db.session.commit()
+    action = "unblocked" if not professional.is_blocked else "blocked"
+    flash(f"Service professional {professional.name} has been {action}.", 'success')
+    return redirect(url_for('view_professionals'))
+
+@app.route('/admin/services', methods=['GET'])
+def view_services():
+    from models import Service
+    services = Service.query.all()
+    return render_template('admin_services.html', services=services)
+
+# Route to create a new service
+@app.route('/admin/service/create', methods=['POST'])
+def create_service():
+    from models import Service
+    name = request.form.get("name")
+    price = request.form.get("price")
+    time_required = request.form.get("time_required")
+    description = request.form.get("description")
+    
+    new_service = Service(
+        service_id=f"SER{str(Service.query.count() + 1)}",  # Unique service_id
+        name=name,
+        price=price,
+        time_required=time_required,
+        description=description
+    )
+    db.session.add(new_service)
+    db.session.commit()
+    flash("Service created successfully", 'success')
+    return redirect(url_for('view_services'))
+
+# Route to update an existing service
+@app.route('/admin/service/update/<string:service_id>', methods=['POST'])
+def update_service(service_id):
+    from models import Service
+    service = Service.query.get_or_404(service_id)
+    service.name = request.form.get("name", service.name)
+    service.price = request.form.get("price", service.price)
+    service.time_required = request.form.get("time_required", service.time_required)
+    service.description = request.form.get("description", service.description)
+    db.session.commit()
+    flash("Service updated successfully", 'success')
+    return redirect(url_for('view_services'))
+
+# Route to delete an existing service
+@app.route('/admin/service/delete/<string:service_id>', methods=['POST'])
+def delete_service(service_id):
+    from models import Service
+    service = Service.query.get_or_404(service_id)
+    db.session.delete(service)
+    db.session.commit()
+    flash("Service deleted successfully", 'success')
+    return redirect(url_for('view_services'))
+

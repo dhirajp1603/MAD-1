@@ -12,9 +12,22 @@
             <a href="{{ url_for('monitor_customers') }}" class="btn btn-info">Monitor Customers</a>
         </div>
 
+        <br>
+
+
         <!-- Section: Pending Approvals -->
         <div class="section">
             <a href="{{ url_for('pending_approval_list') }}" class="btn btn-warning">Pending Approvals</a>
         </div>
+
+        <br>
+        <div class="section">
+            <a href="{{ url_for('view_professionals') }}" class="btn btn-primary">Manage Service Professionals</a>
+        </div>
+        <br>
+        <div class="section">
+            <a href="{{ url_for('view_services') }}" class="btn btn-primary">Manage Services</a>
+        </div>
+
     </div>
 {% endblock %}
