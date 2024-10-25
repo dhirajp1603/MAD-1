@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Monitor Customers{% endblock %}
+
+{% block content %}
+    <h2>Monitor Customers</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.customer_id }}</td>
+                    <td>{{ customer.username }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ "Blocked" if customer.is_blocked else "Active" }}</td>
+                    <td>
+                        <a href="{{ url_for('toggle_block', customer_id=customer.customer_id) }}" class="btn btn-warning">
+                            {{ "Unblock" if customer.is_blocked else "Block" }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
