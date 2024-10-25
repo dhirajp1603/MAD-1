@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}View Service Requests{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center">Your Service Requests</h2>
+
+        <div class="request-list mb-4">
+            <ul class="list-group">
+                {% for request in requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Service:</strong> {{ request.service.name }} <br>
+                            <strong>Status:</strong> {{ request.service_status }} <br>
+                            <strong>Remarks:</strong> {{ request.remarks }} <br>
+                            <strong>Date of Request:</strong> {{ request.date_of_request.strftime('%Y-%m-%d') }} <br>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('edit_service_request', request_id=request.request_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelRequestModal" data-request-id="{{ request.request_id }}">Cancel</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if not requests %}
+            <div class="alert alert-info" role="alert">
+                You have no service requests at the moment.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Cancel Request Modal -->
+    <div class="modal fade" id="cancelRequestModal" tabindex="-1" role="dialog" aria-labelledby="cancelRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelRequestModalLabel">Cancel Service Request</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel this service request?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{{ url_for('cancel_request', request_id='') }}" id="cancelRequestForm">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Confirm Cancel</button>
+                        <input type="hidden" name="request_id" id="cancel_request_id" value="">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // jQuery to set the request_id in the cancel modal
+        $('#cancelRequestModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var requestId = button.data('request-id') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('#cancel_request_id').val(requestId) // Update the hidden input with request_id
+            modal.find('#cancelRequestForm').attr('action', '{{ url_for("cancel_request", request_id="") }}' + requestId); // Update the form action
+        })
+    </script>
+{% endblock %}

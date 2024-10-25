@@ -155,25 +155,33 @@ def professionalregister_post():
     return redirect(url_for("login_service_professional"))
 
 # Customer Login
-@app.route('/customerlogin', methods=['POST'])
-def customerlogin_post():
-    from models import Customer  # Import the models here
-    username = request.form.get('username')
-    password = request.form.get('password')
-    
-    customer = Customer.query.filter_by(username=username).first()
+@app.route('/customerlogin', methods=['GET', 'POST'])
+def customer_login():  # Make sure this name is consistent
+    from models import Customer
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        customer = Customer.query.filter_by(username=username).first()
 
-    if not customer or not check_password_hash(customer.password, password):
-        flash("Incorrect username or password", 'danger')
-        return redirect(url_for("login_customer"))
+        if not customer:
+            flash("Incorrect username or password", 'danger')
+            return redirect(url_for("customer_login"))  # Use the correct endpoint name
 
-    if is_user_blocked(customer):
-        flash("Your account is blocked. Contact support.", 'danger')
-        return redirect(url_for("login_customer"))
-    
-    session['user_id'] = customer.customer_id
-    flash("Login successful", 'success')
-    return redirect(url_for("index"))
+        if not check_password_hash(customer.password, password):
+            flash("Incorrect username or password", 'danger')
+            return redirect(url_for("customer_login"))
+
+        if is_user_blocked(customer):
+            flash("Your account is blocked. Contact support.", 'danger')
+            return redirect(url_for("customer_login"))
+
+        session['customer_id'] = customer.customer_id
+        flash("Login successful", 'success')
+        return redirect(url_for("customer_dashboard"))
+
+    return render_template('customer_login.html')
+
 
 # Service Professional Login
 @app.route('/professionallogin', methods=['POST'])
@@ -361,6 +369,7 @@ def delete_service(service_id):
     flash("Service deleted successfully", 'success')
     return redirect(url_for('view_services'))
 
+
 @app.route('/admin/overview')
 def admin_overview():
     from models import Customer, Service, ServiceRequest, ServiceProfessional
@@ -377,5 +386,119 @@ def admin_overview():
     return render_template('admin_overview.html', num_users=num_users, num_services=num_services,
                            total_bookings=total_bookings, total_revenue=total_revenue,
                            blocked_users=blocked_users, approved_professionals=approved_professionals)
+
+# Route to view customer dashboard
+@app.route('/customer_dashboard')
+def customer_dashboard():
+    from models import Service, Review
+    services = Service.query.all()  # Fetch all services
+    customer_id = session.get('customer_id')  # Assuming you're using session
+    reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
+    return render_template('customer_dashboard.html', services=services, reviews=reviews)
+    
+
+@app.route('/request_service', methods=['POST'])
+def request_service():
+    from models import ServiceRequest
+    service_id = request.form.get('service_id')
+    remarks = request.form.get('remarks')
+    customer_id = session.get('customer_id')  # Assuming you're using session
+
+    # Create and save the service request
+    new_request = ServiceRequest(service_id=service_id, customer_id=customer_id, remarks=remarks, service_status='Pending')
+    db.session.add(new_request)
+    db.session.commit()
+
+    flash('Service request submitted successfully!', 'success')
+    return redirect(url_for('customer_dashboard'))
+
+@app.route('/create_request', methods=['GET', 'POST'])
+def create_request():
+    from models import ServiceRequest
+    if request.method == 'POST':
+        service_id = request.form['service_id']
+        customer_id = request.form['customer_id']
+        remarks = request.form['remarks']
+
+        # Create a new service request instance
+        new_request = ServiceRequest(
+            service_id=service_id,
+            customer_id=customer_id,
+            remarks=remarks,
+            service_status='Pending'  # Initial status
+        )
+
+        # Add the new request to the session and commit
+        db.session.add(new_request)
+        db.session.commit()
+
+        flash('Service request has been successfully created!', 'success')
+        return redirect(url_for('customer_dashboard'))  # Redirect to the dashboard
+
+    return render_template('create_request.html')
+
+
+# Route to view requests made by the customer
+@app.route('/view_requests')
+def view_requests():
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')
+    requests = ServiceRequest.query.filter_by(customer_id=customer_id).all()
+    return render_template('view_requests.html', requests=requests)
+
+# Route to view requests made by the customer
+@app.route('/cancel_request/<string:request_id>')
+def cancel_request(request_id):
+    from models import ServiceRequest
+    request = ServiceRequest.query.get_or_404(request_id)
+    if request.service_status == 'Pending':
+        db.session.delete(request)
+        db.session.commit()
+        flash('Service request cancelled successfully', 'success')
+    else:
+        flash('Cannot cancel request as it is already in progress', 'danger')
+    return redirect(url_for('view_requests'))
+
+# Route to edit requests made by the customer
+@app.route('/edit_service_request/<request_id>', methods=['GET', 'POST'])
+def edit_service_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get_or_404(request_id)  # Get the service request by ID
+
+    if request.method == 'POST':
+        # Update the service request fields
+        service_request.date_of_request = request.form['date_of_request']
+        service_request.service_status = request.form['service_status']
+        service_request.remarks = request.form['remarks']
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        flash('Service request updated successfully!', 'success')
+        return redirect(url_for('customer_dashboard'))
+
+    return render_template('edit_service_request.html', service_request=service_request)
+
+
+# Route to view reviews made by the customer
+@app.route('/view_reviews')
+def view_reviews():
+    from models import Review
+    customer_id = session.get('customer_id')
+    reviews = Review.query.filter_by(customer_id=customer_id).all()
+    return render_template('view_reviews.html', reviews=reviews)
+
+#route to Update customer profile
+@app.route('/update_customer', methods=['POST'])
+def update_customer():
+    from models import Customer
+    customer_id = session.get('customer_id')
+    customer = Customer.query.get_or_404(customer_id)
+    customer.name = request.form.get('name', customer.name)
+    customer.email = request.form.get('email', customer.email)
+    db.session.commit()
+    flash('Profile updated successfully!', 'success')
+    return redirect(url_for('customer_dashboard'))
+
 
 

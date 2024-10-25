@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Service Request{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Edit Service Request</h2>
+        <form method="POST" action="{{ url_for('update_service_request', request_id=service_request.request_id) }}">
+            <div class="form-group">
+                <label for="date_of_request">Date of Request</label>
+                <input type="datetime-local" class="form-control" id="date_of_request" name="date_of_request" value="{{ service_request.date_of_request.strftime('%Y-%m-%dT%H:%M') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="service_status">Completion Status</label>
+                <select class="form-control" id="service_status" name="service_status" required>
+                    <option value="Pending" {% if service_request.service_status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="In Progress" {% if service_request.service_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Completed" {% if service_request.service_status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Cancelled" {% if service_request.service_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="3">{{ service_request.remarks }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Request</button>
+            <a href="{{ url_for('customer_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+{% endblock %}
