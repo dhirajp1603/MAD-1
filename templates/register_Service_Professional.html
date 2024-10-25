@@ -4,6 +4,7 @@
 
 {% block content %}
     <h2>Service Professional Registration</h2>
+    <p>Please fill out the form below to register as a service professional. Your registration will be reviewed by an admin, and you will be notified upon approval.</p>
     <form action="{{ url_for('professionalregister_post') }}" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
@@ -22,7 +23,7 @@
             <input type="text" class="form-control" id="service_type" name="service_type" required>
         </div>
         <div class="mb-3">
-            <label for="experience" class="form-label">Experience</label>
+            <label for="experience" class="form-label">Experience (in years)</label>
             <input type="number" class="form-control" id="experience" name="experience" required>
         </div>
         <div class="mb-3">

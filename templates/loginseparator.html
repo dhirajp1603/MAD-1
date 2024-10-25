@@ -1,30 +1,48 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-Login - Household Services
+    Login
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mt-5 text-center">Login</h1>
-    <div class="row mt-5">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h2 class="card-title">Customer Login</h2>
-                    <p class="card-text">Log in to manage your Services.</p>
-                    <a href="{{ url_for('login_customer') }}" class="btn btn-primary">Login as Customer</a>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Login</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8"> <!-- Set a uniform column width for the overall section -->
+            <div class="row">
+                <div class="col-md-12 mb-4"> <!-- Admin Login should also be full width -->
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h2 class="card-title">Admin Login</h2>
+                            <p class="card-text">Log in to manage services and professionals.</p>
+                            <a href="{{ url_for('login_admin') }}" class="btn btn-primary btn-block">Login as Admin</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h2 class="card-title">Service Professional Login</h2>
-                    <p class="card-text">Log in to view and accept Service requests.</p>
-                    <a href="{{ url_for('login_service_professional') }}" class="btn btn-primary">Login as Service Professional</a>
+            <div class="row">
+                <div class="col-md-45 mb-4"> <!-- Equal width for Customer and Service Professional -->
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h2 class="card-title">Customer</h2>
+                            <p class="card-text">Register / Log in to request services.</p>
+                            <a href="{{ url_for('register_customer') }}" class="btn btn-primary btn-block">Register</a>
+                            <a href="{{ url_for('login_customer') }}" class="btn btn-primary btn-block">Login</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-45 mb-4"> <!-- Match the width of the Customer block -->
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h2 class="card-title">Service Professional</h2>
+                            <p class="card-text">Register / Log in to view and accept service requests.</p>
+                            <a href="{{ url_for('register_service_professional') }}" class="btn btn-primary btn-block">Register</a>
+                            <a href="{{ url_for('login_service_professional') }}" class="btn btn-primary btn-block">Login</a>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </div>
