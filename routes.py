@@ -320,12 +320,18 @@ def toggle_block_professional(professional_id):
     return redirect(url_for('view_professionals'))
 
 @app.route('/admin/services', methods=['GET'])
-def view_services():
+def view_services1():
     from models import Service
     services = Service.query.all()
     return render_template('admin_services.html', services=services)
 
 # Route to create a new service
+# Route to display the service creation form
+@app.route('/admin/service/create', methods=['GET'])
+def show_create_service():
+    return render_template('create_service.html')  # Create this HTML template
+
+# Route to handle the form submission
 @app.route('/admin/service/create', methods=['POST'])
 def create_service():
     from models import Service
@@ -334,17 +340,25 @@ def create_service():
     time_required = request.form.get("time_required")
     description = request.form.get("description")
     
+    # Validation checks
+    if not name or not price or not time_required:
+        flash("Please fill in all required fields.", 'danger')
+        return redirect(url_for('show_create_service'))  # Redirect back to the form
+
+    # Create new service
     new_service = Service(
-        service_id=f"SER{str(Service.query.count() + 1)}",  # Unique service_id
+        service_id=f"SER{str(Service.query.count() + 1)}",  # Generate a unique service_id
         name=name,
-        price=price,
+        price=float(price),  # Convert to float
         time_required=time_required,
         description=description
     )
+    
     db.session.add(new_service)
     db.session.commit()
     flash("Service created successfully", 'success')
-    return redirect(url_for('view_services'))
+    return redirect(url_for('view_services'))  # Redirect to the service list after creation
+
 
 # Route to update an existing service
 @app.route('/admin/service/update/<string:service_id>', methods=['POST'])
@@ -414,29 +428,64 @@ def request_service():
 
 @app.route('/create_request', methods=['GET', 'POST'])
 def create_request():
-    from models import ServiceRequest
+    from models import ServiceRequest, Service, Customer, ServiceProfessional
     if request.method == 'POST':
         service_id = request.form['service_id']
         customer_id = request.form['customer_id']
+        professional_id = request.form['professional_id']
+
+        date_of_completion = datetime.strptime(request.form['date_of_completion'], '%Y-%m-%d').date()
+        service_status = request.form['service_status']
         remarks = request.form['remarks']
 
-        # Create a new service request instance
+        # Debugging: Print values
+        print(f"Creating ServiceRequest with: service_id={service_id}, customer_id={customer_id}, "
+              f"professional_id={professional_id}, date_of_completion={date_of_completion}, "
+              f"service_status={service_status}, remarks={remarks}")
+
         new_request = ServiceRequest(
             service_id=service_id,
             customer_id=customer_id,
-            remarks=remarks,
-            service_status='Pending'  # Initial status
+            professional_id=professional_id,
+            date_of_request=datetime.utcnow().date(),  # Automatically set to current date
+            date_of_completion=date_of_completion,
+            service_status=service_status,
+            remarks=remarks
         )
-
-        # Add the new request to the session and commit
+        
+        # Add the new_request to the session and commit
         db.session.add(new_request)
         db.session.commit()
+        flash('Service request created successfully!', 'success')
+        return redirect(url_for('customer_dashboard'))
 
-        flash('Service request has been successfully created!', 'success')
-        return redirect(url_for('customer_dashboard'))  # Redirect to the dashboard
+    # For GET requests (same as previous)
+    current_customer_id = session.get('customer_id')
+    current_customer = Customer.query.get(current_customer_id)
 
-    return render_template('create_request.html')
+    if current_customer is None:
+        flash('Customer not found. Please log in again.', 'danger')
+        return redirect(url_for('login'))
 
+    service_id = Service.query.all()
+    professionals = ServiceProfessional.query.all()
+    current_date = datetime.utcnow().date()
+
+    return render_template(
+        'create_request.html',
+        service_id=service_id,
+        customer_id=current_customer.customer_id,
+        customer_name=current_customer.name,
+        ServiceProfessional=professionals,
+        current_date=current_date
+    )
+
+# Route to view available services
+@app.route('/view_services')
+def view_services():
+    from models import Service
+    services = Service.query.all()
+    return render_template('view_services.html', services=services)
 
 # Route to view requests made by the customer
 @app.route('/view_requests')
