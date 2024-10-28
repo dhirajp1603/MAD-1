@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Pending Service Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Pending Service Requests</h2>
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Service ID</th>
+                <th>Customer ID</th>
+                <th>Date of Request</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in pending_requests %}
+            <tr>
+                <td>{{ request.request_id }}</td>
+                <td>{{ request.service_id }}</td>
+                <td>{{ request.customer_id }}</td>
+                <td>{{ request.date_of_request.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <form action="{{ url_for('accept_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-success">Accept</button>
+                    </form>
+                    <form action="{{ url_for('reject_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No pending requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

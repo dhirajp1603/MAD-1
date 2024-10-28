@@ -202,7 +202,7 @@ def professionallogin_post():
     
     session['user_id'] = professional.professional_id
     flash("Login successful", 'success')
-    return redirect(url_for("index"))
+    return redirect(url_for("professional_dashboard"))
 
 # Logout
 @app.route("/logout")
@@ -549,5 +549,57 @@ def update_customer():
     flash('Profile updated successfully!', 'success')
     return redirect(url_for('customer_dashboard'))
 
+@app.route('/professional_dashboard')
+def professional_dashboard():
+    return render_template('professional_dashboard.html')
 
+# Route for viewing pending service requests
+@app.route('/professional/pending_requests')
+def professional_pending_requests():
+    from models import ServiceRequest
+    user_id = session.get('user_id')
+    pending_requests = ServiceRequest.query.filter_by(service_status='Pending').all()
+    return render_template('professional_pending_requests.html', pending_requests=pending_requests)
+
+# Route for accepting a request
+@app.route('/professional/accept_request/<request_id>', methods=['POST'])
+def accept_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get(request_id)
+    if service_request:
+        service_request.service_status = 'Accepted'
+        service_request.professional_id = session.get('user_id')
+        db.session.commit()
+        flash("Request accepted successfully.", 'success')
+    else:
+        flash("Request not found.", 'danger')
+    return redirect(url_for('professional_pending_requests'))
+
+# Route for rejecting a request
+@app.route('/professional/reject_request/<request_id>', methods=['POST'])
+def reject_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get(request_id)
+    if service_request:
+        service_request.service_status = 'Rejected'
+        db.session.commit()
+        flash("Request rejected successfully.", 'danger')
+    else:
+        flash("Request not found.", 'danger')
+    return redirect(url_for('professional_pending_requests'))
+
+# Route for viewing completed services
+@app.route('/professional/completed_services')
+def professional_completed_services():
+    from models import ServiceRequest
+    user_id = session.get('user_id')
+    completed_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Completed').all()
+    return render_template('professional_completed_services.html', completed_requests=completed_requests)
+
+# Route for logging out
+@app.route('/logout_professional')
+def logout_professional():
+    session.pop('user_id', None)
+    flash("Logout successful.", 'success')
+    return redirect(url_for("index"))
 
