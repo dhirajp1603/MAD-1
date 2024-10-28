@@ -1,78 +1,57 @@
-{% extends "layout.html" %}
+<!-- view_requests.html -->
 
-{% block title %}View Service Requests{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Service Requests</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>My Service Requests</h1>
 
-{% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">Your Service Requests</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Request ID</th>
-                <th>Service</th>
-                <th>Status</th>
-                <th>Remarks</th>
-                <th>Date of Request</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in service_requests %}
-            <tr>
-                <td>{{ request.request_id }}</td>
-                <td>{{ request.service.name }}</td>
-                <td>{{ request.service_status }}</td>
-                <td>{{ request.remarks }}</td>
-                <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    <a href="{{ url_for('edit_service_request', request_id=request.request_id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelRequestModal" data-request-id="{{ request.request_id }}">Cancel</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    {% if not service_requests %}
-    <div class="alert alert-info" role="alert">
-        You have no service requests at the moment.
-    </div>
+    {% if requests %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Service Name</th>
+                    <th>Date of Request</th>
+                    <th>Date of Completion</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td>{{ request.request_id }}</td>
+                    <td>{{ request.service.name }}</td>
+                    <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        {% if request.date_of_completion %}
+                            {{ request.date_of_completion.strftime('%Y-%m-%d') }}
+                        {% else %}
+                            Not completed
+                        {% endif %}
+                    </td>
+                    <td>{{ request.service_status }}</td>
+                    <td>{{ request.remarks }}</td>
+                    <td>
+                        {% if request.service_status == 'Pending' %}
+                            <a href="{{ url_for('cancel_request', request_id=request.request_id) }}" class="btn btn-danger">Cancel</a>
+                        {% endif %}
+                        <a href="{{ url_for('edit_service_request', request_id=request.request_id) }}" class="btn btn-primary">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have no service requests.</p>
     {% endif %}
-</div>
 
-<!-- Cancel Request Modal -->
-<div class="modal fade" id="cancelRequestModal" tabindex="-1" role="dialog" aria-labelledby="cancelRequestModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelRequestModalLabel">Cancel Service Request</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to cancel this service request?
-            </div>
-            <div class="modal-footer">
-                <form method="POST" action="{{ url_for('cancel_request', request_id='') }}" id="cancelRequestForm">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Confirm Cancel</button>
-                    <input type="hidden" name="request_id" id="cancel_request_id" value="">
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // jQuery to set the request_id in the cancel modal
-    $('#cancelRequestModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var requestId = button.data('request-id') // Extract info from data-* attributes
-        var modal = $(this)
-        modal.find('#cancel_request_id').val(requestId) // Update the hidden input with request_id
-        modal.find('#cancelRequestForm').attr('action', '{{ url_for("cancel_request", request_id="") }}' + requestId); // Update the form action
-    })
-</script>
-
-{% endblock %}
+    <a href="{{ url_for('customer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</body>
+</html>
