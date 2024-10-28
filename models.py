@@ -74,7 +74,6 @@ class ServiceRequest(db.Model):
     date_of_request = db.Column(db.DateTime, default=datetime.utcnow)
     date_of_completion = db.Column(db.DateTime)
     service_status = db.Column(db.String(50), nullable=False)
-    status = db.Column(db.String(50), default="Pending")
     remarks = db.Column(db.Text)
     reviews = db.relationship('Review', backref='service_request', cascade="all, delete-orphan")
 
