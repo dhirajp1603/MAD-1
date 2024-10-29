@@ -18,8 +18,6 @@
             </div>
         </div>
 
-        <!-- Section: Create Service Requests (Removed as per previous context) -->
-
         <!-- Section: Service Requests -->
         <div class="col-md-4 mb-4">
             <div class="card shadow border-info h-100 bg-light">
@@ -83,11 +81,11 @@
                         <input type="hidden" name="service_id" id="service_id" value="">
                         <div class="form-group">
                             <label for="remarks">Remarks</label>
-                            <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+                            <textarea class="form-control" id="remarks" name="remarks" rows="3" aria-label="Enter any remarks for the service request"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
                         <button type="submit" class="btn btn-primary">Submit Request</button>
                     </div>
                 </form>
@@ -95,24 +93,49 @@
         </div>
     </div>
 
-    <style>
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%; /* Ensure the cards take full height of the column */
-        }
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .modal-header {
-            background-color: #f8f9fa;
-        }
-        .modal-body {
-            background-color: #ffffff;
-        }
-        .btn {
-            border-radius: 20px;
-        }
-    </style>
+    <!-- New Section: Available Services -->
+    <div class="col-md-12">
+        <h4 class="text-center mt-4 mb-3">Available Services</h4>
+        <div class="list-group">
+            {% for service in services %}
+                <div class="list-group-item mb-2">
+                    <p><strong>Service ID:</strong> {{ service.service_id }}</p>
+                    <p><strong>Service Name:</strong> {{ service.name }}</p>
+                    <a href="{{ url_for('create_request', service_id=service.service_id) }}" class="btn btn-primary">
+                        Create Request
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%; /* Ensures the cards take full height of the column */
+    }
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .btn:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    .modal-dialog {
+        max-width: 90%; /* Makes modals responsive */
+    }
+    .list-group-item {
+        padding: 1rem 1.5rem;
+    }
+    .modal-header {
+        background-color: #f8f9fa;
+    }
+    .modal-body {
+        background-color: #ffffff;
+    }
+    .btn {
+        border-radius: 20px;
+    }
+</style>
 {% endblock %}

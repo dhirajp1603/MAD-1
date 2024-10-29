@@ -1,38 +1,65 @@
 {% extends "layout.html" %}
 
-{% block title %}Create New Service{% endblock %}
+{% block title %}Create Service Request{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center">Create New Service</h2>
+    <h2 class="text-center">Create Service Request</h2>
 
-    <form method="POST" action="{{ url_for('create_service') }}">
-        <!-- Service Name -->
+    <form method="POST" action="{{ url_for('create_request') }}">
+        <!-- Service ID -->
         <div class="form-group">
-            <label for="name">Service Name</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+            <label for="service_id">Service ID</label>
+            <input type="text" class="form-control" id="service_id" name="service_id" value="{{ service_id }}" readonly required>
         </div>
 
-        <!-- Price -->
+        <!-- Customer Name -->
         <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+            <label for="customer_id">Customer Name</label>
+            <input type="text" class="form-control" id="customer_id" name="customer_id" value="{{ customer_name }}" readonly required>
+            <input type="hidden" name="customer_id" value="{{ customer_id }}"> <!-- Hidden field for customer ID -->
         </div>
 
-        <!-- Time Required -->
+        <!-- Professional ID -->
         <div class="form-group">
-            <label for="time_required">Time Required</label>
-            <input type="text" class="form-control" id="time_required" name="time_required" required>
+            <label for="professional_id">Professional Name</label>
+            <select class="form-control" id="professional_id" name="professional_id" required>
+                <option value="" disabled selected>Select a professional</option>
+                {% for professional in ServiceProfessional %}
+                    <option value="{{ professional.professional_id }}">{{ professional.name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
-        <!-- Description -->
+        <!-- Date of Request -->
         <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+            <label for="date_of_request">Date of Request</label>
+            <input type="date" class="form-control" id="date_of_request" name="date_of_request" value="{{ current_date }}" readonly required>
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Service</button>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        <!-- Date of Completion -->
+        <div class="form-group">
+            <label for="date_of_completion">Date of Completion</label>
+            <input type="date" class="form-control" id="date_of_completion" name="date_of_completion" required>
+        </div>
+
+        <!-- Service Status -->
+        <div class="form-group">
+            <label for="service_status">Service Status</label>
+            <select class="form-control" id="service_status" name="service_status" required>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="remarks">Remarks</label>
+            <textarea class="form-control" id="remarks" name="remarks" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="{{ url_for('view_requests') }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}
