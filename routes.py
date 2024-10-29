@@ -320,18 +320,12 @@ def toggle_block_professional(professional_id):
     return redirect(url_for('view_professionals'))
 
 @app.route('/admin/services', methods=['GET'])
-def view_services1():
+def view_services():
     from models import Service
     services = Service.query.all()
     return render_template('admin_services.html', services=services)
 
 # Route to create a new service
-# Route to display the service creation form
-@app.route('/admin/service/create', methods=['GET'])
-def show_create_service():
-    return render_template('create_service.html')  # Create this HTML template
-
-# Route to handle the form submission
 @app.route('/admin/service/create', methods=['POST'])
 def create_service():
     from models import Service
@@ -340,25 +334,17 @@ def create_service():
     time_required = request.form.get("time_required")
     description = request.form.get("description")
     
-    # Validation checks
-    if not name or not price or not time_required:
-        flash("Please fill in all required fields.", 'danger')
-        return redirect(url_for('show_create_service'))  # Redirect back to the form
-
-    # Create new service
     new_service = Service(
-        service_id=f"SER{str(Service.query.count() + 1)}",  # Generate a unique service_id
+        service_id=f"SER{str(Service.query.count() + 1)}",  # Unique service_id
         name=name,
-        price=float(price),  # Convert to float
+        price=price,
         time_required=time_required,
         description=description
     )
-    
     db.session.add(new_service)
     db.session.commit()
     flash("Service created successfully", 'success')
-    return redirect(url_for('view_services'))  # Redirect to the service list after creation
-
+    return redirect(url_for('view_services'))
 
 # Route to update an existing service
 @app.route('/admin/service/update/<string:service_id>', methods=['POST'])
@@ -410,121 +396,6 @@ def customer_dashboard():
     reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
     return render_template('customer_dashboard.html', services=services, reviews=reviews)
     
-
-@app.route('/request_service', methods=['POST'])
-def request_service():
-    from models import ServiceRequest
-    service_id = request.form.get('service_id')
-    remarks = request.form.get('remarks')
-    customer_id = session.get('customer_id')  # Assuming you're using session
-
-    # Create and save the service request
-    new_request = ServiceRequest(service_id=service_id, customer_id=customer_id, remarks=remarks, service_status='Pending')
-    db.session.add(new_request)
-    db.session.commit()
-
-    flash('Service request submitted successfully!', 'success')
-    return redirect(url_for('customer_dashboard'))
-
-@app.route('/create_request', methods=['GET', 'POST'])
-def create_request():
-    from models import Service, ServiceProfessional, Customer
-    if request.method == 'POST':
-        # POST logic for saving request
-        pass  # Your existing POST logic here
-
-    # For GET requests
-    service_id = request.args.get('service_id')  # Use service_id from the query parameter
-    selected_service = Service.query.get(service_id) if service_id else None
-    current_customer_id = session.get('customer_id')
-    current_customer = Customer.query.get(current_customer_id)
-
-    if current_customer is None:
-        flash('Customer not found. Please log in again.', 'danger')
-        return redirect(url_for('login'))
-
-    professionals = ServiceProfessional.query.all()
-    current_date = datetime.utcnow().date()
-
-    return render_template(
-        'create_request.html',
-        service_id=selected_service.service_id if selected_service else "",
-        customer_id=current_customer.customer_id,
-        customer_name=current_customer.name,
-        ServiceProfessional=professionals,
-        current_date=current_date
-    )
-
-
-# Route to view available services
-@app.route('/view_services')
-def view_services():
-    from models import Service
-    services = Service.query.all()
-    return render_template('view_services.html', services=services)
-
-# Route to view requests made by the customer
-@app.route('/view_requests')
-def view_requests():
-    from models import ServiceRequest
-    customer_id = session.get('customer_id')
-    requests = ServiceRequest.query.filter_by(customer_id=customer_id).all()
-    return render_template('view_requests.html', requests=requests)
-
-# Route to view requests made by the customer
-@app.route('/cancel_request/<string:request_id>')
-def cancel_request(request_id):
-    from models import ServiceRequest
-    request = ServiceRequest.query.get_or_404(request_id)
-    if request.service_status == 'Pending':
-        db.session.delete(request)
-        db.session.commit()
-        flash('Service request cancelled successfully', 'success')
-    else:
-        flash('Cannot cancel request as it is already in progress', 'danger')
-    return redirect(url_for('view_requests'))
-
-# Route to edit requests made by the customer
-@app.route('/edit_service_request/<request_id>', methods=['GET', 'POST'])
-def edit_service_request(request_id):
-    from models import ServiceRequest
-    service_request = ServiceRequest.query.get_or_404(request_id)  # Get the service request by ID
-
-    if request.method == 'POST':
-        # Update the service request fields
-        service_request.date_of_request = request.form['date_of_request']
-        service_request.service_status = request.form['service_status']
-        service_request.remarks = request.form['remarks']
-        
-        # Commit the changes to the database
-        db.session.commit()
-        
-        flash('Service request updated successfully!', 'success')
-        return redirect(url_for('customer_dashboard'))
-
-    return render_template('edit_service_request.html', service_request=service_request)
-
-
-# Route to view reviews made by the customer
-@app.route('/view_reviews')
-def view_reviews():
-    from models import Review
-    customer_id = session.get('customer_id')
-    reviews = Review.query.filter_by(customer_id=customer_id).all()
-    return render_template('view_reviews.html', reviews=reviews)
-
-#route to Update customer profile
-@app.route('/update_customer', methods=['POST'])
-def update_customer():
-    from models import Customer
-    customer_id = session.get('customer_id')
-    customer = Customer.query.get_or_404(customer_id)
-    customer.name = request.form.get('name', customer.name)
-    customer.email = request.form.get('email', customer.email)
-    db.session.commit()
-    flash('Profile updated successfully!', 'success')
-    return redirect(url_for('customer_dashboard'))
-
 @app.route('/professional_dashboard')
 def professional_dashboard():
     return render_template('professional_dashboard.html')
