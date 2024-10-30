@@ -211,6 +211,7 @@ def logout():
     flash("Logged out successfully", 'info')
     return redirect(url_for("index"))
 
+# Admin Login
 @app.route('/login_admin', methods=['GET', 'POST'])
 def login_admin():
     from models import Admin
@@ -228,6 +229,7 @@ def login_admin():
             
     return render_template('login_admin.html')  # Create this template for admin login form
 
+# Admin Routes
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if not session.get('admin_logged_in'):
@@ -387,15 +389,7 @@ def admin_overview():
                            total_bookings=total_bookings, total_revenue=total_revenue,
                            blocked_users=blocked_users, approved_professionals=approved_professionals)
 
-# Route to view customer dashboard
-@app.route('/customer_dashboard')
-def customer_dashboard():
-    from models import Service, Review
-    services = Service.query.all()  # Fetch all services
-    customer_id = session.get('customer_id')  # Assuming you're using session
-    reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
-    return render_template('customer_dashboard.html', services=services, reviews=reviews)
-    
+# Professional routes   
 @app.route('/professional_dashboard')
 def professional_dashboard():
     return render_template('professional_dashboard.html')
@@ -449,4 +443,13 @@ def logout_professional():
     session.pop('user_id', None)
     flash("Logout successful.", 'success')
     return redirect(url_for("index"))
+
+# Customer Routes
+@app.route('/customer_dashboard')
+def customer_dashboard():
+    from models import Service, Review
+    services = Service.query.all()  # Fetch all services
+    customer_id = session.get('customer_id')  # Assuming you're using session
+    reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
+    return render_template('customer_dashboard.html', services=services, reviews=reviews)
 
