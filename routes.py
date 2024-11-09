@@ -453,3 +453,36 @@ def customer_dashboard():
     reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
     return render_template('customer_dashboard.html', services=services, reviews=reviews)
 
+@app.route('/available_services')
+def available_services():
+    from models import Service
+    services = Service.query.all()  # Assuming all services are available to request
+    return render_template('available_services.html', services=services)
+
+def generate_request_id():
+    from models import ServiceRequest
+    last_request = ServiceRequest.query.order_by(ServiceRequest.request_id.desc()).first()
+    if last_request:
+        last_id = int(last_request.request_id.replace("REQ", ""))
+        new_id = f"REQ{last_id + 1}"
+    else:
+        new_id = "REQ1"
+    return new_id
+
+@app.route('/request_service/<service_id>')
+def request_service(service_id):
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')  # Assuming customer_id is stored in session after login
+    new_request = ServiceRequest(
+        request_id=generate_request_id(),
+        service_id=service_id,
+        customer_id=customer_id,
+        service_status="Pending"
+    )
+    db.session.add(new_request)
+    db.session.commit()
+    
+    flash("Service requested successfully!", "success")
+    return redirect(url_for('customer_dashboard'))
+
+
