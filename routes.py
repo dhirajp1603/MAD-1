@@ -485,4 +485,35 @@ def request_service(service_id):
     flash("Service requested successfully!", "success")
     return redirect(url_for('customer_dashboard'))
 
+@app.route('/view_customer_requests')
+def view_customer_requests():
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')
+    if not customer_id:
+        flash("Please log in to view your requests", "warning")
+        return redirect(url_for('login'))
+
+    requests = ServiceRequest.query.filter_by(customer_id=customer_id).all()
+    return render_template('customer_requests.html', requests=requests)
+
+@app.route('/complete_request/<string:request_id>', methods=['POST'])
+def complete_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get_or_404(request_id)
+
+    # Ensure the customer is marking only their requests as complete
+    if service_request.customer_id != session.get('customer_id'):
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for('view_customer_requests'))
+
+    # Ensure the request has been accepted by a professional
+    if service_request.professional_id is None:
+        flash("The request has not been accepted by a professional.", "warning")
+    else:
+        service_request.service_status = "Completed"
+        service_request.date_of_completion = datetime.utcnow()
+        db.session.commit()
+        flash("Request marked as completed.", "success")
+
+    return redirect(url_for('view_customer_requests'))
 

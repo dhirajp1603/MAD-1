@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}My Service Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">My Service Requests</h2>
+
+    {% if requests %}
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Professional</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                        <tr>
+                            <td>{{ request.request_id }}</td>
+                            <td>{{ request.service.name }}</td>
+                            <td>{{ request.service_status }}</td>
+                            <td>
+                                {% if request.professional %}
+                                    {{ request.professional.name }}
+                                {% else %}
+                                    Not yet assigned
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if request.service_status == 'Accepted' %}
+                                    <form action="{{ url_for('complete_request', request_id=request.request_id) }}" method="post">
+                                        <button type="submit" class="btn btn-success btn-sm">Mark as Completed</button>
+                                    </form>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No service requests found.</p>
+    {% endif %}
+</div>
+{% endblock %}

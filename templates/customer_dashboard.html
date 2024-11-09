@@ -5,15 +5,24 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Customer Dashboard</h2>
-    <p class="text-center">Explore and request services available to you.</p>
 
-    <div class="row justify-content-center mt-4">
-        <!-- Button to View Available Services -->
-        <div class="col-md-4 mb-4">
+    <div class="row text-center mt-4">
+        <!-- View Available Services Button -->
+        <div class="col-md-6 mb-4">
             <div class="card shadow border-info h-100">
                 <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title text-center">Available Services</h5>
-                    <a href="{{ url_for('available_services') }}" class="btn btn-info mt-auto">View Services</a>
+                    <h5 class="card-title">View Available Services</h5>
+                    <a href="{{ url_for('available_services') }}" class="btn btn-info mt-auto">Available Services</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Requested Services Button -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow border-primary h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">View My Service Requests</h5>
+                    <a href="{{ url_for('view_customer_requests') }}" class="btn btn-primary mt-auto">My Requests</a>
                 </div>
             </div>
         </div>
