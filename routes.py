@@ -453,3 +453,67 @@ def customer_dashboard():
     reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
     return render_template('customer_dashboard.html', services=services, reviews=reviews)
 
+@app.route('/available_services')
+def available_services():
+    from models import Service
+    services = Service.query.all()  # Assuming all services are available to request
+    return render_template('available_services.html', services=services)
+
+def generate_request_id():
+    from models import ServiceRequest
+    last_request = ServiceRequest.query.order_by(ServiceRequest.request_id.desc()).first()
+    if last_request:
+        last_id = int(last_request.request_id.replace("REQ", ""))
+        new_id = f"REQ{last_id + 1}"
+    else:
+        new_id = "REQ1"
+    return new_id
+
+@app.route('/request_service/<service_id>')
+def request_service(service_id):
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')  # Assuming customer_id is stored in session after login
+    new_request = ServiceRequest(
+        request_id=generate_request_id(),
+        service_id=service_id,
+        customer_id=customer_id,
+        service_status="Pending"
+    )
+    db.session.add(new_request)
+    db.session.commit()
+    
+    flash("Service requested successfully!", "success")
+    return redirect(url_for('customer_dashboard'))
+
+@app.route('/view_customer_requests')
+def view_customer_requests():
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')
+    if not customer_id:
+        flash("Please log in to view your requests", "warning")
+        return redirect(url_for('login'))
+
+    requests = ServiceRequest.query.filter_by(customer_id=customer_id).all()
+    return render_template('customer_requests.html', requests=requests)
+
+@app.route('/complete_request/<string:request_id>', methods=['POST'])
+def complete_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get_or_404(request_id)
+
+    # Ensure the customer is marking only their requests as complete
+    if service_request.customer_id != session.get('customer_id'):
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for('view_customer_requests'))
+
+    # Ensure the request has been accepted by a professional
+    if service_request.professional_id is None:
+        flash("The request has not been accepted by a professional.", "warning")
+    else:
+        service_request.service_status = "Completed"
+        service_request.date_of_completion = datetime.utcnow()
+        db.session.commit()
+        flash("Request marked as completed.", "success")
+
+    return redirect(url_for('view_customer_requests'))
+
