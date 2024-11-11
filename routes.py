@@ -517,3 +517,43 @@ def complete_request(request_id):
 
     return redirect(url_for('view_customer_requests'))
 
+@app.route('/write_reviews')
+def write_reviews():
+    from models import ServiceRequest
+    customer_id = session.get('customer_id')
+    # Retrieve completed services for the customer to review
+    completed_services = ServiceRequest.query.filter_by(
+        customer_id=customer_id, service_status='Completed'
+    ).all()
+    return render_template('write_reviews.html', completed_services=completed_services)
+
+@app.route('/submit_review/<request_id>', methods=['POST'])
+def submit_review(request_id):
+    from models import Review, ServiceRequest
+    rating = request.form.get('rating')
+    comment = request.form.get('comment')
+    customer_id = session.get('customer_id')
+    
+    # Create and save the review
+    new_review = Review(
+        request_id=request_id,
+        service_id=ServiceRequest.query.get(request_id).service_id,
+        customer_id=customer_id,
+        professional_id=ServiceRequest.query.get(request_id).professional_id,
+        rating=rating,
+        comment=comment,
+    )
+    db.session.add(new_review)
+    db.session.commit()
+
+    flash("Review submitted successfully!", "success")
+    return redirect(url_for('write_reviews'))
+
+@app.route('/my_reviews')
+def view_my_reviews():
+    from models import Review
+    # Assuming `current_user` is available to identify the logged-in customer
+    customer_id = session.get('customer_id')
+    reviews = Review.query.filter_by(customer_id=customer_id).all()
+    return render_template('view_my_reviews.html', reviews=reviews)
+
