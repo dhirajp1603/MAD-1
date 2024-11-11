@@ -8,7 +8,7 @@
 
     <div class="row text-center mt-4">
         <!-- View Available Services Button -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card shadow border-info h-100">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <h5 class="card-title">View Available Services</h5>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- View Requested Services Button -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card shadow border-primary h-100">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <h5 class="card-title">View My Service Requests</h5>
@@ -27,11 +27,32 @@
             </div>
         </div>
 
+        <!-- Write Reviews Button -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow border-info h-100">
+            <div class="card shadow border-success h-100">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <h5 class="card-title">Write Reviews</h5>
-                    <a href="{{ url_for('write_reviews') }}" class="btn btn-info mt-auto">Write Reviews</a>
+                    <a href="{{ url_for('write_reviews') }}" class="btn btn-success mt-auto">Write Reviews</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View My Reviews Button -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow border-warning h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">View My Reviews</h5>
+                    <a href="{{ url_for('view_my_reviews') }}" class="btn btn-warning mt-auto">My Reviews</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow border-danger h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Logout</h5>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger mt-auto">Logout</a>
                 </div>
             </div>
         </div>

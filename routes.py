@@ -549,3 +549,11 @@ def submit_review(request_id):
     flash("Review submitted successfully!", "success")
     return redirect(url_for('write_reviews'))
 
+@app.route('/my_reviews')
+def view_my_reviews():
+    from models import Review
+    # Assuming `current_user` is available to identify the logged-in customer
+    customer_id = session.get('customer_id')
+    reviews = Review.query.filter_by(customer_id=customer_id).all()
+    return render_template('view_my_reviews.html', reviews=reviews)
+
