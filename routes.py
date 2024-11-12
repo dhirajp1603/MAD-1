@@ -437,6 +437,14 @@ def professional_completed_services():
     completed_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Completed').all()
     return render_template('professional_completed_services.html', completed_requests=completed_requests)
 
+@app.route('/professional_reviews')
+def professional_reviews():
+    from models import Review
+    user_id = session.get('user_id')
+    # Fetch reviews for the logged-in professional
+    reviews = Review.query.filter_by(professional_id=user_id).all()
+    return render_template('professional_reviews.html', reviews=reviews)
+
 # Route for logging out
 @app.route('/logout_professional')
 def logout_professional():
@@ -517,37 +525,53 @@ def complete_request(request_id):
 
     return redirect(url_for('view_customer_requests'))
 
-@app.route('/write_reviews')
-def write_reviews():
+@app.route('/review_services')
+def review_services():
     from models import ServiceRequest
     customer_id = session.get('customer_id')
-    # Retrieve completed services for the customer to review
-    completed_services = ServiceRequest.query.filter_by(
-        customer_id=customer_id, service_status='Completed'
-    ).all()
-    return render_template('write_reviews.html', completed_services=completed_services)
+    if not customer_id:
+        flash("Please log in to view your reviews.", 'danger')
+        return redirect(url_for('login'))
+
+    completed_services = ServiceRequest.query.filter_by(customer_id=customer_id, service_status='Completed').all()
+    return render_template('review_services.html', completed_services=completed_services)
 
 @app.route('/submit_review/<request_id>', methods=['POST'])
 def submit_review(request_id):
-    from models import Review, ServiceRequest
-    rating = request.form.get('rating')
-    comment = request.form.get('comment')
+    from models import ServiceRequest, Review
     customer_id = session.get('customer_id')
-    
-    # Create and save the review
-    new_review = Review(
-        request_id=request_id,
-        service_id=ServiceRequest.query.get(request_id).service_id,
-        customer_id=customer_id,
-        professional_id=ServiceRequest.query.get(request_id).professional_id,
-        rating=rating,
-        comment=comment,
-    )
-    db.session.add(new_review)
-    db.session.commit()
+    if not customer_id:
+        flash("Please log in to submit a review.", 'danger')
+        return redirect(url_for('login'))
 
-    flash("Review submitted successfully!", "success")
-    return redirect(url_for('write_reviews'))
+    service_request = ServiceRequest.query.get(request_id)
+    if service_request and service_request.customer_id == customer_id and service_request.service_status == 'Completed':
+        rating = int(request.form.get('rating'))
+        comment = request.form.get('comment')
+
+        if service_request.review:
+            # Update existing review
+            service_request.review.rating = rating
+            service_request.review.comment = comment
+        else:
+            # Add new review
+            review = Review(
+                request_id=request_id,
+                service_id=service_request.service_id,
+                customer_id=customer_id,
+                professional_id=service_request.professional_id,
+                rating=rating,
+                comment=comment
+            )
+            db.session.add(review)
+
+        db.session.commit()
+        flash("Review submitted successfully.", 'success')
+    else:
+        flash("Invalid request or service not completed.", 'danger')
+
+    return redirect(url_for('review_services'))
+
 
 @app.route('/my_reviews')
 def view_my_reviews():

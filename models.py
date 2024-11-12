@@ -102,7 +102,7 @@ class ServiceRequest(db.Model):
     date_of_completion = db.Column(db.DateTime)
     service_status = db.Column(db.String(50), nullable=False)
     remarks = db.Column(db.Text)
-    reviews = db.relationship('Review', backref='service_request', cascade="all, delete-orphan")
+    review = db.relationship('Review', backref='service_request', uselist=False, cascade="all, delete-orphan")
     professional = db.relationship('ServiceProfessional', backref='requests')
 
 class Review(db.Model):

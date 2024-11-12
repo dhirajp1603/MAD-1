@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}My Reviews{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">My Reviews</h2>
+
+    {% if reviews %}
+        <div class="list-group mt-4">
+            {% for review in reviews %}
+                <div class="list-group-item">
+                    <h5>Service: {{ review.service.name }}</h5>
+                    <p><strong>Customer:</strong> {{ review.customer.name }}</p>
+                    <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+                    <p><strong>Comment:</strong> {{ review.comment }}</p>
+                    <p><small><strong>Date:</strong> {{ review.date_created.strftime('%Y-%m-%d') }}</small></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center mt-4">You have not received any reviews yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
