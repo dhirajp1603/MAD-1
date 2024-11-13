@@ -13,6 +13,7 @@
                 <th>Customer ID</th>
                 <th>Date of Request</th>
                 <th>Date of Completion</th>
+                <th>Review</th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +24,20 @@
                 <td>{{ request.customer_id }}</td>
                 <td>{{ request.date_of_request.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 <td>{{ request.date_of_completion.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                
+                <!-- Display Review if it exists -->
+                <td>
+                    {% if request.reviews %}
+                        <p><strong>Rating:</strong> {{ request.reviews[0].rating }}</p>
+                        <p><strong>Comment:</strong> {{ request.reviews[0].comment }}</p>
+                    {% else %}
+                        <p>No review submitted.</p>
+                    {% endif %}
+                </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="5" class="text-center">No completed services found.</td>
+                <td colspan="6" class="text-center">No completed services found.</td>
             </tr>
             {% endfor %}
         </tbody>

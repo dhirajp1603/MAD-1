@@ -515,39 +515,67 @@ def complete_request(request_id):
         db.session.commit()
         flash("Request marked as completed.", "success")
 
-    return redirect(url_for('view_customer_requests'))
+    return redirect(url_for('write_reviews'))
 
 @app.route('/write_reviews')
 def write_reviews():
     from models import ServiceRequest
     customer_id = session.get('customer_id')
-    # Retrieve completed services for the customer to review
-    completed_services = ServiceRequest.query.filter_by(
-        customer_id=customer_id, service_status='Completed'
+    
+    # Retrieve completed services for the customer that have not been reviewed yet
+    completed_services = ServiceRequest.query.filter(
+        ServiceRequest.customer_id == customer_id, 
+        ServiceRequest.service_status == 'Completed', 
+        ServiceRequest.review_submitted == False  # Ensure that only services without reviews appear
     ).all()
+    
     return render_template('write_reviews.html', completed_services=completed_services)
 
-@app.route('/submit_review/<request_id>', methods=['POST'])
-def submit_review(request_id):
-    from models import Review, ServiceRequest
-    rating = request.form.get('rating')
-    comment = request.form.get('comment')
-    customer_id = session.get('customer_id')
-    
-    # Create and save the review
-    new_review = Review(
-        request_id=request_id,
-        service_id=ServiceRequest.query.get(request_id).service_id,
-        customer_id=customer_id,
-        professional_id=ServiceRequest.query.get(request_id).professional_id,
-        rating=rating,
-        comment=comment,
-    )
-    db.session.add(new_review)
-    db.session.commit()
 
-    flash("Review submitted successfully!", "success")
-    return redirect(url_for('write_reviews'))
+@app.route('/submit_review/<request_id>', methods=['GET', 'POST'])
+def submit_review(request_id):
+    from models import ServiceRequest, Review
+    customer_id = session.get('customer_id')
+
+    # Retrieve the service request
+    service_request = ServiceRequest.query.filter_by(request_id=request_id, customer_id=customer_id).first()
+
+    if not service_request:
+        flash("Service request not found.", "error")
+        return redirect(url_for('write_reviews'))
+
+    # Check if the review has already been submitted
+    if service_request.review_submitted:
+        flash("You have already submitted a review for this service.", "warning")
+        return redirect(url_for('write_reviews'))
+
+    if request.method == 'POST':
+        # Get form data
+        rating = request.form.get('rating')
+        comment = request.form.get('comment')
+
+        # Create the review object
+        review = Review(
+            request_id=service_request.request_id,
+            service_id=service_request.service_id,
+            customer_id=customer_id,
+            rating=rating,
+            comment=comment
+        )
+
+        # Add the review to the session and commit to the database
+        db.session.add(review)
+        db.session.commit()
+
+        # Mark the service request as having a submitted review
+        service_request.review_submitted = True
+        db.session.commit()
+
+        flash("Your review has been submitted successfully.", "success")
+        return redirect(url_for('write_reviews'))
+
+    return render_template('submit_review.html', service_request=service_request)
+
 
 @app.route('/my_reviews')
 def view_my_reviews():
