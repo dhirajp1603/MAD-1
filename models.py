@@ -102,7 +102,10 @@ class ServiceRequest(db.Model):
     date_of_completion = db.Column(db.DateTime)
     service_status = db.Column(db.String(50), nullable=False)
     remarks = db.Column(db.Text)
+
     review = db.relationship('Review', backref='service_request', uselist=False, cascade="all, delete-orphan")
+    review_submitted = db.Column(db.Boolean, default=False)
+    reviews = db.relationship('Review', backref='service_request', cascade="all, delete-orphan")
     professional = db.relationship('ServiceProfessional', backref='requests')
 
 class Review(db.Model):
@@ -115,6 +118,7 @@ class Review(db.Model):
     rating = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.Text)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    review_submitted = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class PendingApproval(db.Model):
