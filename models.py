@@ -103,10 +103,12 @@ class ServiceRequest(db.Model):
     service_status = db.Column(db.String(50), nullable=False)
     remarks = db.Column(db.Text)
 
-    review = db.relationship('Review', backref='service_request', uselist=False, cascade="all, delete-orphan")
-    review_submitted = db.Column(db.Boolean, default=False)
-    reviews = db.relationship('Review', backref='service_request', cascade="all, delete-orphan")
+    # Define a one-to-one relationship with Review
+    review = db.relationship('Review', backref='related_request', uselist=False, cascade="all, delete-orphan")
+
+    # Relationship with ServiceProfessional
     professional = db.relationship('ServiceProfessional', backref='requests')
+
 
 class Review(db.Model):
     __tablename__ = 'reviews'
