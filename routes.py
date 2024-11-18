@@ -523,7 +523,7 @@ def complete_request(request_id):
         db.session.commit()
         flash("Request marked as completed.", "success")
 
-    return redirect(url_for('write_reviews'))
+    return redirect(url_for('review_services'))
 
 @app.route('/review_services')
 def review_services():
