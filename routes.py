@@ -54,13 +54,12 @@ def register():
 def login():
     return render_template("loginseparator.html")
 
-@app.route("/register_customer")
-def register_customer():
-    return render_template("register_customer.html")
 
 @app.route("/register_service_professional")
 def register_service_professional():
-    return render_template("register_Service_Professional.html")
+    from models import Service
+    services = Service.query.all()
+    return render_template("register_Service_Professional.html", services=services)
 
 @app.route("/login_customer")
 def login_customer():
@@ -70,73 +69,90 @@ def login_customer():
 def login_service_professional():
     return render_template("Service_Professional_login.html")
 
-# Customer Registration
-@app.route("/customerregister", methods=["POST"])
-def customerregister_post():
-    from models import Customer # Import the models here
-    username = request.form.get("username")
-    password = request.form.get("password")
-    confirmpassword = request.form.get("confirmpassword")
-    name = request.form.get("name")
-    email = request.form.get("email")
-    
-    if not (username and password and confirmpassword and name):
-        flash("Please fill out all required fields", 'danger')
-        return redirect(url_for("register_customer"))
 
-    if password != confirmpassword:
-        flash("Password and confirm password do not match", 'danger')
-        return redirect(url_for("register_customer"))
+# Customer Registration
+@app.route("/register_customer", methods=['GET', 'POST'])
+def register_customer():
+    from models import Customer
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmpassword = request.form.get("confirmpassword")
+        name = request.form.get("name")
+        email = request.form.get("email")
+        
+        if not (username and password and confirmpassword and name):
+            flash("Please fill out all required fields", 'danger')
+            return redirect(url_for("register_customer"))
+
+        if password != confirmpassword:
+            flash("Password and confirm password do not match", 'danger')
+            return redirect(url_for("register_customer"))
+        
+        # Check if username or email already exists
+        if Customer.query.filter_by(username=username).first() or Customer.query.filter_by(email=email).first():
+            flash("Username or Email already exists", 'danger')
+            return redirect(url_for("register_customer"))
+        
+        # Create new customer
+        password_hash = generate_password_hash(password)
+        new_customer = Customer(
+            customer_id=generate_customer_id(),
+            username=username,
+            password=password_hash,
+            name=name,
+            email=email
+        )
+        db.session.add(new_customer)
+        db.session.commit()
+        flash("Customer registered successfully", 'success')
+        return redirect(url_for("login_customer"))
     
-    # Check if username or email already exists
-    if Customer.query.filter_by(username=username).first() or Customer.query.filter_by(email=email).first():
-        flash("Username or Email already exists", 'danger')
-        return redirect(url_for("register_customer"))
-    
-    # Create new customer
-    password_hash = generate_password_hash(password)
-    new_customer = Customer(
-        customer_id=generate_customer_id(),
-        username=username,
-        password=password_hash,
-        name=name,
-        email=email
-    )
-    db.session.add(new_customer)
-    db.session.commit()
-    flash("Customer registered successfully", 'success')
-    return redirect(url_for("login_customer"))
+    return render_template("register_customer.html")
+
+# Running the app
+if __name__ == "__main__":
+    app.run(debug=True)
 
 # Service Professional Registration
 @app.route("/professionalregister", methods=["POST"])
 def professionalregister_post():
-    from models import PendingApproval, ServiceProfessional  # Import the PendingApproval model here
+    from models import ServiceProfessional, Service, PendingApproval
     username = request.form.get("username")
     password = request.form.get("password")
     confirmpassword = request.form.get("confirmpassword")
     name = request.form.get("name")
     email = request.form.get("email")
-    service_type = request.form.get("service_type")
+    service_type_id = request.form.get("service_type")  # This now refers to `service_id` in the dropdown
     experience = request.form.get("experience")
     description = request.form.get("description")
 
     # Validate form inputs
-    if not (username and password and confirmpassword and name and service_type):
-        flash("Please fill out all required fields", 'danger')
+    if not (username and password and confirmpassword and name and service_type_id):
+        flash("Please fill out all required fields.", "danger")
         return redirect(url_for("register_service_professional"))
 
     if password != confirmpassword:
-        flash("Password and confirm password do not match", 'danger')
+        flash("Password and Confirm Password do not match.", "danger")
         return redirect(url_for("register_service_professional"))
     
-    # Check if username or email already exists in ServiceProfessional or PendingApproval
-    if (ServiceProfessional.query.filter_by(username=username).first() or 
-        ServiceProfessional.query.filter_by(email=email).first() or
-        PendingApproval.query.filter_by(username=username).first() or
-        PendingApproval.query.filter_by(email=email).first()):
-        flash("Username or Email already exists", 'danger')
+    # Validate selected service_type_id against the database
+    service = Service.query.filter_by(service_id=service_type_id).first()
+    if not service:
+        flash("Invalid Service Type selected.", "danger")
         return redirect(url_for("register_service_professional"))
-    
+
+    # Check for duplicate username or email
+    existing_user = (
+        ServiceProfessional.query.filter_by(username=username).first()
+        or ServiceProfessional.query.filter_by(email=email).first()
+        or PendingApproval.query.filter_by(username=username).first()
+        or PendingApproval.query.filter_by(email=email).first()
+    )
+    if existing_user:
+        flash("Username or Email already exists.", "danger")
+        return redirect(url_for("register_service_professional"))
+
     # Create new pending approval entry
     password_hash = generate_password_hash(password)
     new_pending_professional = PendingApproval(
@@ -144,14 +160,14 @@ def professionalregister_post():
         password=password_hash,
         name=name,
         email=email,
-        service_type=service_type,
+        service_type=service_type_id,  # Store the valid service ID
         experience=experience,
-        description=description
+        description=description,
     )
     db.session.add(new_pending_professional)
     db.session.commit()
     
-    flash("Service Professional registered successfully and is awaiting approval", 'success')
+    flash("Service Professional registered successfully and is awaiting approval.", "success")
     return redirect(url_for("login_service_professional"))
 
 # Customer Login
