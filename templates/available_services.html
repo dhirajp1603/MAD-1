@@ -15,7 +15,20 @@
                     <p class="card-text">{{ service.description }}</p>
                     <p class="card-text">Price: ${{ service.price }}</p>
                     <p class="card-text">Duration: {{ service.time_required }}</p>
-                    <a href="{{ url_for('request_service', service_id=service.service_id) }}" class="btn btn-success">Request Service</a>
+                    
+                    <!-- Dropdown for selecting professionals -->
+                    <form action="{{ url_for('request_service') }}" method="POST">
+                        <div class="form-group">
+                            <label for="professionalSelect{{ service.service_id }}">Select Professional:</label>
+                            <select class="form-control" id="professionalSelect{{ service.service_id }}" name="professional_id" required>
+                                {% for professional in service.professionals %}
+                                <option value="{{ professional.id }}">{{ professional.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" name="service_id" value="{{ service.service_id }}">
+                        <button type="submit" class="btn btn-success mt-2">Request Service</button>
+                    </form>
                 </div>
             </div>
         </div>

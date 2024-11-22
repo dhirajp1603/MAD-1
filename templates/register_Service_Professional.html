@@ -6,7 +6,7 @@
 <h2>Service Professional Registration</h2>
 <p>Please fill out the form below to register as a service professional. Your registration will be reviewed by an admin, and you will be notified upon approval.</p>
 
-<form action="{{ url_for('register_service_professional') }}" method="POST">
+<form action="{{ url_for('professionalregister_post') }}" method="POST">
     <div class="mb-3">
         <label for="username" class="form-label">Username</label>
         <input type="text" class="form-control" id="username" name="username" required>
@@ -20,7 +20,7 @@
         <input type="email" class="form-control" id="email" name="email" required>
     </div>
     <div class="mb-3">
-        <label for="service_type" class="form-label">Service Type</label>
+        <label for="service_type" class="form-label">Service Name</label>
         <select class="form-select" id="service_type" name="service_type" required>
             <option value="" disabled selected>Select a service type</option>
             {% for service in services %}

@@ -278,16 +278,6 @@ def pending_approval_list():
     pending_professionals = PendingApproval.query.all()
     return render_template('pending_approval_list.html', pending_professionals=pending_professionals)
 
-@app.route('/view_professional_profile/<int:id>')
-def view_professional_profile(id):
-    from models import PendingApproval
-    professional = PendingApproval.query.get(id)
-    if not professional:
-        flash("Professional not found", "danger")
-        return redirect(url_for('pending_approval_list'))
-
-    return render_template('professional_profile.html', professional=professional)
-
 @app.route('/approve_professional/<int:id>')
 def approve_professional(id):
     from models import PendingApproval, ServiceProfessional
@@ -401,39 +391,19 @@ def delete_service(service_id):
 @app.route('/admin/overview')
 def admin_overview():
     from models import Customer, Service, ServiceRequest, ServiceProfessional
-
-    # General stats
     num_users = Customer.query.count()
     num_services = Service.query.count()
     total_bookings = ServiceRequest.query.count()
-
-    # Calculate total revenue for completed services
-    total_revenue = (
-        db.session.query(db.func.sum(Service.price))
-        .join(ServiceRequest, Service.service_id == ServiceRequest.service_id)  # Fix here: use service_id
-        .filter(ServiceRequest.service_status == "Completed")
-        .scalar() or 0
-    )
-
-    # Additional metrics
+    total_revenue = db.session.query(db.func.sum(Service.price)).scalar() or 0
+    
+    # Extra queries for blocked users and approved professionals
     blocked_users = Customer.query.filter_by(is_blocked=True).count()
     approved_professionals = ServiceProfessional.query.filter_by(is_blocked=False).count()
-    num_requested_services = ServiceRequest.query.filter_by(service_status="Pending").count()
-    num_completed_services = ServiceRequest.query.filter_by(service_status="Completed").count()
-
-    # Pass data to the template
-    return render_template(
-        'admin_overview.html',
-        num_users=num_users,
-        num_services=num_services,
-        total_bookings=total_bookings,
-        total_revenue=total_revenue,
-        blocked_users=blocked_users,
-        approved_professionals=approved_professionals,
-        num_requested_services=num_requested_services,
-        num_completed_services=num_completed_services,
-    )
-
+    
+    # Pass data to the template for graphs
+    return render_template('admin_overview.html', num_users=num_users, num_services=num_services,
+                           total_bookings=total_bookings, total_revenue=total_revenue,
+                           blocked_users=blocked_users, approved_professionals=approved_professionals)
 
 # Professional routes   
 @app.route('/professional_dashboard')
