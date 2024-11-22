@@ -13,11 +13,27 @@
     <p><strong>Approved Professionals:</strong> {{ approved_professionals }}</p>
 </div>
 
-<div id="chart-container">
-    <h3>Activity Overview Graphs</h3>
-    <!-- Example placeholder for graphs -->
-    <canvas id="user-chart"></canvas>
-    <canvas id="booking-chart"></canvas>
+<div class="charts-container">
+    <div id="chart-container" style="width: 48%; display: inline-block; vertical-align: top;">
+        <h3>Platform Activity</h3>
+        <canvas id="user-chart"></canvas>
+    </div>
+    <div id="chart-container" style="width: 48%; display: inline-block; vertical-align: top;">
+        <h3>Bookings & Services</h3>
+        <canvas id="booking-chart"></canvas>
+    </div>
+</div>
+
+<!-- New Section for Additional Data (Number of Requested/Completed Services) -->
+<div class="service-status-charts" style="margin-top: 40px; display: flex; justify-content: space-between;">
+    <div>
+        <h3>Requested Services</h3>
+        <canvas id="requested-services-chart"></canvas>
+    </div>
+    <div>
+        <h3>Completed Services</h3>
+        <canvas id="completed-services-chart"></canvas>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -45,5 +61,30 @@
             }]
         }
     });
+
+    const requestedServicesChart = new Chart(document.getElementById('requested-services-chart'), {
+        type: 'bar',
+        data: {
+            labels: ['Requested Services'],
+            datasets: [{
+                label: 'Number of Requested Services',
+                data: [{{ num_requested_services }}],
+                backgroundColor: '#ff9f40'
+            }]
+        }
+    });
+
+    const completedServicesChart = new Chart(document.getElementById('completed-services-chart'), {
+        type: 'bar',
+        data: {
+            labels: ['Completed Services'],
+            datasets: [{
+                label: 'Number of Completed Services',
+                data: [{{ num_completed_services }}],
+                backgroundColor: '#4caf50'
+            }]
+        }
+    });
 </script>
+
 {% endblock %}

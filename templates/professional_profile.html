@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}Professional Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Professional Profile</h2>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h4 class="card-title">{{ professional.name }}</h4>
+            <p><strong>Username:</strong> {{ professional.username }}</p>
+            <p><strong>Email:</strong> {{ professional.email }}</p>
+            <p><strong>Service Type:</strong> {{ professional.service_type }}</p>
+            <p><strong>Experience:</strong> {{ professional.experience }} years</p>
+            <p><strong>Description:</strong> {{ professional.description }}</p>
+            <p><strong>Date of Application:</strong> {{ professional.date_created.strftime('%Y-%m-%d') }}</p>
+            <div class="mt-4">
+                <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success">Approve</a>
+                <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger">Reject</a>
+                <a href="{{ url_for('pending_approval_list') }}" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
