@@ -3,80 +3,132 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar with better contrast and search button -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <!-- Strongly Styled Navbar Brand -->
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('admin_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('admin_overview') }}">Analytics</a>
+                    </li>
+                </ul>
+                <!-- Adding ms-auto to create space between app name and navbar items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
     <div class="container mt-4">
-        <h2 class="text-center">Welcome to the Admin Dashboard</h2>
-        <p class="text-center">Manage the application from this panel.</p>
+        <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Welcome to the Admin Dashboard</h2>
+        <p class="text-center mb-5" style="font-size: 1.25rem;">Manage the application from this panel.</p>
 
         <div class="row text-center">
             <!-- Section: Monitor Customers -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-primary h-100">
+                <div class="card shadow-lg border-primary h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Monitor Customers</h5>
-                        <a href="{{ url_for('monitor_customers') }}" class="btn btn-primary mt-auto">View Customers</a>
+                        <h5 class="card-title text-primary">Monitor Customers</h5>
+                        <a href="{{ url_for('monitor_customers') }}" class="btn btn-primary mt-auto" style="border-radius: 25px;">View Customers</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Pending Approvals -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-warning h-100">
+                <div class="card shadow-lg border-warning h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Pending Approvals</h5>
-                        <a href="{{ url_for('pending_approval_list') }}" class="btn btn-warning mt-auto">Review Approvals</a>
+                        <h5 class="card-title text-warning">Pending Approvals</h5>
+                        <a href="{{ url_for('pending_approval_list') }}" class="btn btn-warning mt-auto" style="border-radius: 25px;">Review Approvals</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Manage Service Professionals -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-success h-100">
+                <div class="card shadow-lg border-success h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Manage Service Professionals</h5>
-                        <a href="{{ url_for('view_professionals') }}" class="btn btn-success mt-auto">Manage Professionals</a>
+                        <h5 class="card-title text-success">Manage Service Professionals</h5>
+                        <a href="{{ url_for('view_professionals') }}" class="btn btn-success mt-auto" style="border-radius: 25px;">Manage Professionals</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Manage Services -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-info h-100">
+                <div class="card shadow-lg border-info h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Manage Services</h5>
-                        <a href="{{ url_for('view_services') }}" class="btn btn-info mt-auto">Manage Services</a>
+                        <h5 class="card-title text-info">Manage Services</h5>
+                        <a href="{{ url_for('view_services') }}" class="btn btn-info mt-auto" style="border-radius: 25px;">Manage Services</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Platform Analytics -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-dark h-100">
+                <div class="card shadow-lg border-dark h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Platform Analytics</h5>
-                        <a href="{{ url_for('admin_overview') }}" class="btn btn-dark mt-auto">Overview</a>
+                        <h5 class="card-title text-dark">Platform Analytics</h5>
+                        <a href="{{ url_for('admin_overview') }}" class="btn btn-dark mt-auto" style="border-radius: 25px;">Overview</a>
                     </div>
                 </div>
             </div>
 
             <!-- Section: Logout -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow border-danger h-100">
+                <div class="card shadow-lg border-danger h-100" style="border-radius: 15px;">
                     <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Logout</h5>
-                        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-auto">Logout</a>
+                        <h5 class="card-title text-danger">Logout</h5>
+                        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-auto" style="border-radius: 25px;">Logout</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-        .card {
-            transition: transform 0.2s;
-            height: 100%; /* Ensure the cards take full height of the column */
-        }
-        .card:hover {
-            transform: scale(1.05);
-        }
-    </style>
+<style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
+    .form-control {
+        width: 250px;
+    }
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border-radius: 15px;
+    }
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    .card-body {
+        padding: 2rem;
+    }
+</style>
+
 {% endblock %}

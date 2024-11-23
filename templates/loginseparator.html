@@ -1,48 +1,54 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Login
+    Welcome to EasyHands
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Login</h1>
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Welcome to <span class="text-warning">EasyHands</span></h1>
+        <h3 class="text-secondary">Simplifying Services for Everyone</h3>
+        <hr class="my-4">
+
+        <p class="lead text-muted"><b>Your one-stop solution to connect with service professionals and customers effortlessly.</b></p>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-md-8"> <!-- Set a uniform column width for the overall section -->
-            <div class="row">
-                <div class="col-md-12 mb-4"> <!-- Admin Login should also be full width -->
-                    <div class="card shadow-sm">
+        <div class="col-md-10">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card shadow-lg border-primary">
                         <div class="card-body text-center">
-                            <h2 class="card-title">Admin Login</h2>
-                            <p class="card-text">Log in to manage services and professionals.</p>
-                            <a href="{{ url_for('login_admin') }}" class="btn btn-primary btn-block">Login as Admin</a>
+                            <h2 class="card-title text-primary">Admin Login</h2>
+                            <p class="card-text">Log in to oversee services, manage professionals, and keep EasyHands running smoothly.</p>
+                            <a href="{{ url_for('login_admin') }}" class="btn btn-primary btn-lg btn-block">Login as Admin</a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-45 mb-4"> <!-- Equal width for Customer and Service Professional -->
-                    <div class="card shadow-sm">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-lg border-success">
                         <div class="card-body text-center">
-                            <h2 class="card-title">Customer</h2>
-                            <p class="card-text">Register / Log in to request services.</p>
-                            <a href="{{ url_for('register_customer') }}" class="btn btn-primary btn-block">Register</a>
-                            <a href="{{ url_for('login_customer') }}" class="btn btn-primary btn-block">Login</a>
+                            <h2 class="card-title text-success">Customer</h2>
+                            <p class="card-text">Find and request services with just a few clicks.</p>
+                            <a href="{{ url_for('register_customer') }}" class="btn btn-success btn-lg btn-block">Register</a>
+                            <a href="{{ url_for('login_customer') }}" class="btn btn-outline-success btn-lg btn-block">Login</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-45 mb-4"> <!-- Match the width of the Customer block -->
-                    <div class="card shadow-sm">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-lg border-info">
                         <div class="card-body text-center">
-                            <h2 class="card-title">Service Professional</h2>
-                            <p class="card-text">Register / Log in to view and accept service requests.</p>
-                            <a href="{{ url_for('register_service_professional') }}" class="btn btn-primary btn-block">Register</a>
-                            <a href="{{ url_for('login_service_professional') }}" class="btn btn-primary btn-block">Login</a>
+                            <h2 class="card-title text-info">Service Professional</h2>
+                            <p class="card-text">Join EasyHands to view and accept service requests tailored to your skills.</p>
+                            <a href="{{ url_for('register_service_professional') }}" class="btn btn-info btn-lg btn-block">Register</a>
+                            <a href="{{ url_for('login_service_professional') }}" class="btn btn-outline-info btn-lg btn-block">Login</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </div>
