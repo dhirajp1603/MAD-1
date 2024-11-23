@@ -9,35 +9,24 @@
         <thead>
             <tr>
                 <th>Request ID</th>
-                <th>Service ID</th>
-                <th>Customer ID</th>
+                <th>Service Name</th>
+                <th>Customer Name</th>
                 <th>Date of Request</th>
                 <th>Date of Completion</th>
-                <th>Review</th>
             </tr>
         </thead>
         <tbody>
-            {% for request in completed_requests %}
+            {% for request, customer_name, service_name in completed_requests %}
             <tr>
                 <td>{{ request.request_id }}</td>
-                <td>{{ request.service_id }}</td>
-                <td>{{ request.customer_id }}</td>
-                <td>{{ request.date_of_request.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>{{ request.date_of_completion.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                
-                <!-- Display Review if it exists -->
-                <td>
-                    {% if request.reviews %}
-                        <p><strong>Rating:</strong> {{ request.reviews[0].rating }}</p>
-                        <p><strong>Comment:</strong> {{ request.reviews[0].comment }}</p>
-                    {% else %}
-                        <p>No review submitted.</p>
-                    {% endif %}
-                </td>
+                <td>{{ service_name }}</td>
+                <td>{{ customer_name }}</td>
+                <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
+                <td>{{ request.date_of_completion.strftime('%Y-%m-%d') }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="text-center">No completed services found.</td>
+                <td colspan="5" class="text-center">No completed services found.</td>
             </tr>
             {% endfor %}
         </tbody>
