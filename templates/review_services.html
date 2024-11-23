@@ -1,49 +1,69 @@
 {% extends "layout.html" %}
 
-{% block title %}Write/Edit Reviews{% endblock %}
+{% block title %}Write Reviews{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center">Write/Edit Reviews</h2>
+    <h2 class="text-center">Write Reviews for Completed Services</h2>
 
-    {% if completed_services %}
-        <table class="table mt-4">
-            <thead>
-                <tr>
-                    <th>Service</th>
-                    <th>Service Professional</th>
-                    <th>Rating</th>
-                    <th>Review</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for service in completed_services %}
-                    <tr>
-                        <td>{{ service.service.name }}</td>
-                        <td>{{ service.professional.name if service.professional else 'N/A' }}</td>
-                        <td>
+    <!-- Pending Reviews Section -->
+    {% if pending_reviews %}
+        <div class="row mt-4">
+            {% for service in pending_reviews %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ service.service.name }}</h5>
+                            <p class="card-text">Serviced by: {{ service.professional.name }}</p>
+                            
+                            <!-- Review Form -->
                             <form action="{{ url_for('submit_review', request_id=service.request_id) }}" method="POST">
-                                <select name="rating" class="form-select" required>
-                                    <option value="">Select Rating</option>
-                                    {% for i in range(1, 6) %}
-                                        <option value="{{ i }}" {% if service.review and service.review.rating == i %}selected{% endif %}>{{ i }}</option>
-                                    {% endfor %}
-                                </select>
-                        </td>
-                        <td>
-                            <textarea name="comment" class="form-control" placeholder="Write your review">{{ service.review.comment if service.review else '' }}</textarea>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                                <div class="form-group">
+                                    <label for="rating">Rating:</label>
+                                    <select name="rating" class="form-control" required>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Poor</option>
+                                        <option value="1">1 - Very Poor</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mt-2">
+                                    <label for="comment">Comment:</label>
+                                    <textarea name="comment" class="form-control" rows="2" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary mt-3 w-100">Submit Review</button>
                             </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p class="text-center">No completed services available for review.</p>
+        <p class="text-center">No pending reviews available.</p>
+    {% endif %}
+
+    <!-- Submitted Reviews Section -->
+    <h2 class="text-center mt-5">Your Submitted Reviews</h2>
+    {% if written_reviews %}
+        <div class="row mt-4">
+            {% for review in written_reviews %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.service.name }}</h5>
+                            <p class="card-text">Serviced by: {{ review.professional.name }}</p>
+                            <p class="card-text"><strong>Rating:</strong> {{ review.rating }}</p>
+                            <p class="card-text"><strong>Comment:</strong> {{ review.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">You have not submitted any reviews yet.</p>
     {% endif %}
 </div>
 {% endblock %}

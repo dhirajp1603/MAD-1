@@ -6,6 +6,16 @@
 <div class="container mt-4">
     <h2 class="text-center">My Reviews</h2>
 
+    <!-- Display the Average Rating -->
+    {% if avg_rating %}
+        <div class="text-center mt-3">
+            <h4>Average Rating: {{ avg_rating }} / 5</h4>
+        </div>
+    {% else %}
+        <p class="text-center mt-3">No ratings available yet.</p>
+    {% endif %}
+
+    <!-- Display the Reviews -->
     {% if reviews %}
         <div class="list-group mt-4">
             {% for review in reviews %}
