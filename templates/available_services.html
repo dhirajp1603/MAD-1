@@ -16,7 +16,7 @@
                     <p class="card-text">Price: Rs.{{ service.price }}</p>
                     <p class="card-text">Duration: {{ service.time_required }} hours</p>
 
-                    <!-- Form with dropdown to select a service professional -->
+                    <!-- Form with dropdown to select a service professional and description -->
                     <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
                         <div class="form-group">
                             <label for="professional">Choose a Service Professional:</label>
@@ -27,6 +27,13 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        
+                        <!-- Description field -->
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter additional details or special instructions" required></textarea>
+                        </div>
+                        
                         <button type="submit" class="btn btn-success">Request Service</button>
                     </form>
                 </div>

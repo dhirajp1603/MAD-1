@@ -3,6 +3,39 @@
 {% block title %}My Service Requests{% endblock %}
 
 {% block content %}
+<!-- Full-Screen Navbar with better contrast and search button -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+    <div class="container-fluid">
+        <!-- Strongly Styled Navbar Brand -->
+        <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Customer Dashboard Content -->
 <div class="container mt-4">
     <h2 class="text-center">My Service Requests</h2>
 
@@ -14,7 +47,8 @@
                         <th>Request ID</th>
                         <th>Service</th>
                         <th>Status</th>
-                        <th>Professional</th>
+                        <th class="professional-name">Professional Name</th>
+                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -24,20 +58,30 @@
                             <td>{{ request.request_id }}</td>
                             <td>{{ request.service.name }}</td>
                             <td>{{ request.service_status }}</td>
-                            <td>
+                            <td class="professional-name">
                                 {% if request.professional %}
                                     {{ request.professional.name }}
                                 {% else %}
                                     Not yet assigned
                                 {% endif %}
                             </td>
+                            <td>{{ request.remarks }}</td>
                             <td>
                                 {% if request.service_status == 'Accepted' %}
                                     <form action="{{ url_for('complete_request', request_id=request.request_id) }}" method="post">
-                                        <button type="submit" class="btn btn-success btn-sm">Mark as Completed</button>
+                                        <button type="submit" class="btn btn-success btn-sm mb-1">Mark as Completed</button>
                                     </form>
-                                {% else %}
-                                    -
+                                {% endif %}
+
+                                {% if request.service_status == 'Pending' %}
+                                    <button onclick="toggleUpdateForm('{{ request.request_id }}')" class="btn btn-primary btn-sm mb-1">Update Request</button>
+                                    <form id="update-form-{{ request.request_id }}" action="{{ url_for('update_request', request_id=request.request_id) }}" method="post" style="display: none;">
+                                        <textarea name="remarks" class="form-control" rows="3" placeholder="Enter additional details or special instructions" required></textarea>
+                                        <button type="submit" class="btn btn-info btn-sm mt-1">Update</button>
+                                    </form>
+                                    <form action="{{ url_for('cancel_request', request_id=request.request_id) }}" method="post">
+                                        <button type="submit" class="btn btn-danger btn-sm mb-1">Cancel Request</button>
+                                    </form>
                                 {% endif %}
                             </td>
                         </tr>
@@ -45,8 +89,78 @@
                 </tbody>
             </table>
         </div>
-    {% else %}
-        <p class="text-center">No service requests found.</p>
+
+        <script>
+            function toggleUpdateForm(requestId) {
+                const form = document.getElementById('update-form-' + requestId);
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            }
+        </script>
     {% endif %}
 </div>
 {% endblock %}
+
+<style>
+    /* Custom styles */
+    .btn {
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .professional-name {
+        font-size: 0.85rem; /* Smaller text */
+        width: 150px; /* Set a fixed width */
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>

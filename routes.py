@@ -528,7 +528,7 @@ def customer_dashboard():
     reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
     return render_template('customer_dashboard.html', services=services, reviews=reviews)
 
-@app.route('/available_services')
+@app.route('/customer_dashboard/available_services')
 def available_services():
     from models import Service, ServiceProfessional
     
@@ -541,7 +541,7 @@ def available_services():
     
     return render_template('available_services.html', services=services)
 
-
+# Route to request a service
 @app.route('/request_service/<service_id>', methods=['POST'])
 def request_service(service_id):
     from models import ServiceRequest, ServiceProfessional, Service
@@ -553,6 +553,8 @@ def request_service(service_id):
     if not professional_id:
         flash("Please select a professional.", "danger")
         return redirect(url_for('available_services'))
+    
+    remarks = request.form.get('description') 
 
     # Create a new service request
     new_request = ServiceRequest(
@@ -560,13 +562,61 @@ def request_service(service_id):
         service_id=service_id,
         customer_id=customer_id,
         professional_id=professional_id,
-        service_status="Pending"
+        service_status="Pending",
+        remarks=remarks
     )
     db.session.add(new_request)
     db.session.commit()
 
     flash("Service requested successfully!", "success")
     return redirect(url_for('customer_dashboard'))
+
+# Route to Update Request
+@app.route('/update_request/<string:request_id>', methods=['POST'])
+def update_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get_or_404(request_id)
+
+    # Ensure the customer is updating only their requests
+    if service_request.customer_id != session.get('customer_id'):
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for('view_customer_requests'))
+
+    remarks = request.form.get('remarks')
+    service_request.remarks = remarks
+    db.session.commit()
+    flash("Request updated successfully.", "success")
+    return redirect(url_for('view_customer_requests'))
+
+# Route to cancel a service request
+@app.route('/cancel_request/<string:request_id>', methods=['POST'])
+def cancel_request(request_id):
+    from models import ServiceRequest
+    service_request = ServiceRequest.query.get_or_404(request_id)
+
+    # Ensure the customer is cancelling only their requests
+    if service_request.customer_id != session.get('customer_id'):
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for('view_customer_requests'))
+
+    service_request.service_status = "Cancelled"
+    db.session.commit()
+    flash("Request cancelled successfully.", "success")
+    return redirect(url_for('view_customer_requests'))
+
+# Route to search for a professional in the customer dashboard
+@app.route('/search_professional', methods=['GET', 'POST'])
+def search_professional():
+    from models import ServiceProfessional
+    professionals = []
+
+    if request.method == 'POST':
+        service_type = request.form.get('service_type')
+        professionals = ServiceProfessional.query.filter_by(service_type=service_type).all()
+
+    return render_template('search_results.html', professionals=professionals)
+
+
 
 @app.route('/view_customer_requests')
 def view_customer_requests():

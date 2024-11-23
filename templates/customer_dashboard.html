@@ -3,49 +3,118 @@
 {% block title %}Customer Dashboard{% endblock %}
 
 {% block content %}
+<!-- Full-Screen Navbar with better contrast and search button -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+    <div class="container-fluid">
+        <!-- Strongly Styled Navbar Brand -->
+        <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Customer Dashboard Content -->
 <div class="container mt-4">
-    <h2 class="text-center">Customer Dashboard</h2>
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Welcome to the Customer Dashboard</h2>
+    <p class="text-center mb-5" style="font-size: 1.25rem;">Manage your service requests and reviews from this panel.</p>
 
-    <div class="row text-center mt-4">
-        <!-- View Available Services Button -->
+    <!-- Adjusted Grid Layout for Proper Centering -->
+    <div class="row text-center">
+        <!-- Section: View Available Services -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow border-info h-100">
+            <div class="card shadow-lg border-info h-100" style="border-radius: 15px;">
                 <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">View Available Services</h5>
-                    <a href="{{ url_for('available_services') }}" class="btn btn-info mt-auto">Available Services</a>
+                    <h5 class="card-title text-info">View Available Services</h5>
+                    <a href="{{ url_for('available_services') }}" class="btn btn-info mt-auto" style="border-radius: 25px;">Available Services</a>
                 </div>
             </div>
         </div>
 
-        <!-- View Requested Services Button -->
+        <!-- Section: View My Service Requests -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow border-primary h-100">
+            <div class="card shadow-lg border-primary h-100" style="border-radius: 15px;">
                 <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">View My Service Requests</h5>
-                    <a href="{{ url_for('view_customer_requests') }}" class="btn btn-primary mt-auto">My Requests</a>
+                    <h5 class="card-title text-primary">View My Service Requests</h5>
+                    <a href="{{ url_for('view_customer_requests') }}" class="btn btn-primary mt-auto" style="border-radius: 25px;">My Requests</a>
                 </div>
             </div>
         </div>
 
-        <!-- Write Reviews Button -->
+        <!-- Section: Write Reviews -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow border-dark h-100">
+            <div class="card shadow-lg border-dark h-100" style="border-radius: 15px;">
                 <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">Write Reviews</h5>
-                    <a href="{{ url_for('review_services') }}" class="btn btn-dark mt-auto">Review Services</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Logout Button -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow border-danger h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">Logout</h5>
-                    <a href="{{ url_for('logout') }}" class="btn btn-danger mt-auto">Logout</a>
+                    <h5 class="card-title text-dark">Write Reviews</h5>
+                    <a href="{{ url_for('review_services') }}" class="btn btn-dark mt-auto" style="border-radius: 25px;">Review Services</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Second Row: Centered Logout Card -->
+    <div class="row text-center">
+        <div class="col-md-4"></div> <!-- Empty column for spacing -->
+        <!-- Section: Logout -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-danger h-100" style="border-radius: 15px;">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title text-danger">Logout</h5>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger mt-auto" style="border-radius: 25px;">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4"></div> <!-- Empty column for spacing -->
+    </div>
 </div>
+
+<style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border-radius: 15px;
+    }
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    .card-body {
+        padding: 2rem;
+    }
+</style>
+
 {% endblock %}
