@@ -477,9 +477,18 @@ def reject_request(request_id):
 # Route for viewing completed services
 @app.route('/professional/completed_services')
 def professional_completed_services():
-    from models import ServiceRequest
+    from models import ServiceRequest, Customer, Service
     user_id = session.get('user_id')
-    completed_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Completed').all()
+
+    # Query to fetch completed requests with customer and service details
+    completed_requests = (
+        db.session.query(ServiceRequest, Customer.name.label('customer_name'), Service.name.label('service_name'))
+        .join(Customer, ServiceRequest.customer_id == Customer.customer_id)
+        .join(Service, ServiceRequest.service_id == Service.service_id)
+        .filter(ServiceRequest.professional_id == user_id, ServiceRequest.service_status == 'Completed')
+        .all()
+    )
+
     return render_template('professional_completed_services.html', completed_requests=completed_requests)
 
 @app.route('/professional_reviews')
