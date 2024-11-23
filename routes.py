@@ -444,7 +444,7 @@ def professional_dashboard():
 def professional_pending_requests():
     from models import ServiceRequest
     user_id = session.get('user_id')
-    pending_requests = ServiceRequest.query.filter_by(service_status='Pending').all()
+    pending_requests = ServiceRequest.query.filter_by(service_status='Pending', professional_id=user_id).all()
     return render_template('professional_pending_requests.html', pending_requests=pending_requests)
 
 # Route for accepting a request
