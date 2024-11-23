@@ -13,21 +13,21 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ service.name }}</h5>
                     <p class="card-text">{{ service.description }}</p>
-                    <p class="card-text">Price: ${{ service.price }}</p>
-                    <p class="card-text">Duration: {{ service.time_required }}</p>
-                    
-                    <!-- Dropdown for selecting professionals -->
-                    <form action="{{ url_for('request_service') }}" method="POST">
+                    <p class="card-text">Price: Rs.{{ service.price }}</p>
+                    <p class="card-text">Duration: {{ service.time_required }} hours</p>
+
+                    <!-- Form with dropdown to select a service professional -->
+                    <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
                         <div class="form-group">
-                            <label for="professionalSelect{{ service.service_id }}">Select Professional:</label>
-                            <select class="form-control" id="professionalSelect{{ service.service_id }}" name="professional_id" required>
+                            <label for="professional">Choose a Service Professional:</label>
+                            <select id="professional" name="professional_id" class="form-control" required>
+                                <option value="">Select a Professional</option>
                                 {% for professional in service.professionals %}
-                                <option value="{{ professional.id }}">{{ professional.name }}</option>
+                                <option value="{{ professional.professional_id }}">{{ professional.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <input type="hidden" name="service_id" value="{{ service.service_id }}">
-                        <button type="submit" class="btn btn-success mt-2">Request Service</button>
+                        <button type="submit" class="btn btn-success">Request Service</button>
                     </form>
                 </div>
             </div>
