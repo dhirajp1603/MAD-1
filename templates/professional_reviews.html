@@ -17,17 +17,28 @@
 
     <!-- Display the Reviews -->
     {% if reviews %}
-        <div class="list-group mt-4">
-            {% for review in reviews %}
-                <div class="list-group-item">
-                    <h5>Service: {{ review.service.name }}</h5>
-                    <p><strong>Customer:</strong> {{ review.customer.name }}</p>
-                    <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
-                    <p><strong>Comment:</strong> {{ review.comment }}</p>
-                    <p><small><strong>Date:</strong> {{ review.date_created.strftime('%Y-%m-%d') }}</small></p>
-                </div>
-            {% endfor %}
-        </div>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Customer</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.service.name }}</td>
+                    <td>{{ review.customer.name }}</td>
+                    <td>{{ review.rating }} / 5</td>
+                    <td>{{ review.comment }}</td>
+                    <td>{{ review.date_created.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <p class="text-center mt-4">You have not received any reviews yet.</p>
     {% endif %}

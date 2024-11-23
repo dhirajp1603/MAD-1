@@ -29,15 +29,6 @@ def generate_service_id():
         new_id = "SER1"
     return new_id
 
-def generate_request_id():
-    last_request = ServiceRequest.query.order_by(ServiceRequest.request_id.desc()).first()
-    if last_request:
-        last_id = int(last_request.request_id.replace("REQ", ""))
-        new_id = f"REQ{last_id + 1}"
-    else:
-        new_id = "REQ1"
-    return new_id
-
 def generate_review_id():
     last_review = Review.query.order_by(Review.review_id.desc()).first()
     if last_review:
@@ -94,7 +85,7 @@ class Service(db.Model):
 
 class ServiceRequest(db.Model):
     __tablename__ = 'service_requests'
-    request_id = db.Column(db.String(100), primary_key=True, default=generate_request_id)
+    request_id = db.Column(db.String(100), primary_key=True)
     service_id = db.Column(db.String(100), db.ForeignKey('services.service_id'), nullable=False)
     customer_id = db.Column(db.String(100), db.ForeignKey('customers.customer_id'), nullable=False)
     professional_id = db.Column(db.String(100), db.ForeignKey('service_professionals.professional_id'), nullable=True)

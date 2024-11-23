@@ -541,15 +541,6 @@ def available_services():
     
     return render_template('available_services.html', services=services)
 
-def generate_request_id():
-    from models import ServiceRequest
-    last_request = ServiceRequest.query.order_by(ServiceRequest.request_id.desc()).first()
-    if last_request:
-        last_id = int(last_request.request_id.replace("REQ", ""))
-        new_id = f"REQ{last_id + 1}"
-    else:
-        new_id = "REQ1"
-    return new_id
 
 @app.route('/request_service/<service_id>', methods=['POST'])
 def request_service(service_id):
@@ -565,7 +556,7 @@ def request_service(service_id):
 
     # Create a new service request
     new_request = ServiceRequest(
-        request_id=generate_request_id(),
+        request_id=f"REQ{str(ServiceRequest.query.count() + 1)}",
         service_id=service_id,
         customer_id=customer_id,
         professional_id=professional_id,
