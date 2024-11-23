@@ -160,7 +160,7 @@ def professionalregister_post():
         password=password_hash,
         name=name,
         email=email,
-        service_type=service_type_id,  # Store the valid service ID
+        service_type=service.name,  # Store the valid service ID
         experience=experience,
         description=description,
     )
