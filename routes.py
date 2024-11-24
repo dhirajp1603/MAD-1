@@ -607,15 +607,34 @@ def cancel_request(request_id):
 # Route to search for a professional in the customer dashboard
 @app.route('/search_professional', methods=['GET', 'POST'])
 def search_professional():
-    from models import ServiceProfessional
+    from models import ServiceProfessional, Review
+    from sqlalchemy import func
     professionals = []
 
     if request.method == 'POST':
         service_type = request.form.get('service_type')
-        professionals = ServiceProfessional.query.filter_by(service_type=service_type).all()
+        professionals = (
+            db.session.query(
+                ServiceProfessional,
+                func.coalesce(func.avg(Review.rating), 0).label('average_rating')
+            )
+            .outerjoin(Review, Review.professional_id == ServiceProfessional.professional_id)
+            .filter(ServiceProfessional.service_type.ilike(f"%{service_type}%"))
+            .group_by(ServiceProfessional.professional_id)
+            .all()
+        )
 
     return render_template('search_results.html', professionals=professionals)
 
+@app.route('/view_professional_profile_customers/<string:professional_id>')
+def view_professional_profile_customers(professional_id):
+    from models import ServiceProfessional
+    professional = ServiceProfessional.query.get(professional_id)
+    if not professional:
+        flash("Professional not found", "danger")
+        return redirect(url_for('search_results'))
+
+    return render_template('view_professional_profile_customers.html', professional=professional)
 
 
 @app.route('/view_customer_requests')
