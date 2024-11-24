@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}Professional Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Profile Heading -->
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 700;">Professional Profile</h2>
+
+    <!-- Professional Details Card -->
+    <div class="card shadow-lg border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body">
+            <h4 class="card-title text-primary fw-bold">{{ professional.name }}</h4>
+            <p class="card-text">Service Type: <span class="text-muted">{{ professional.service_type }}</span></p>
+            <p class="card-text">Experience: <span class="text-muted">{{ professional.experience }} years</span></p>
+            <p class="card-text">Email: <span class="text-muted">{{ professional.email }}</span></p>
+            <p class="card-text">Description:</p>
+            <p class="card-text text-muted">{{ professional.description }}</p>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section mt-5">
+        <h3 class="mb-4" style="font-size: 2rem; font-weight: 700;">Customer Reviews</h3>
+
+        {% if professional.reviews %}
+        <div class="row">
+            {% for review in professional.reviews %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-light h-100" style="border-radius: 15px;">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <span class="fw-bold">Rating:</span> {{ review.rating }} / 5
+                        </p>
+                        <p class="card-text">
+                            <span class="fw-bold">Comment:</span> "{{ review.comment }}"
+                        </p>
+                        <p class="card-text text-end text-muted">
+                            - Reviewed by Customer ID: {{ review.customer_id }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No reviews available for this professional.</p>
+        {% endif %}
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('search_professional') }}" class="btn btn-primary" style="border-radius: 25px;">Back to Search Results</a>
+    </div>
+</div>
+
+<!-- Styling -->
+<style>
+    .card {
+        border-radius: 15px;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    .reviews-section .card {
+        transition: none;
+    }
+    .btn {
+        border-radius: 25px;
+    }
+</style>
+{% endblock %}
