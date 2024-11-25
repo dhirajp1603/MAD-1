@@ -376,41 +376,48 @@ def delete_service(service_id):
     flash("Service deleted successfully", 'success')
     return redirect(url_for('view_services'))
 
+# Route to view all service requests
+@app.route('/admin/service_requests')
+def view_service_requests():
+    from models import ServiceRequest
+    service_requests = ServiceRequest.query.all()
+    return render_template('admin_service_requests.html', service_requests=service_requests)
 
 @app.route('/admin/overview')
 def admin_overview():
-    from models import Customer, Service, ServiceRequest, ServiceProfessional
+    from models import Customer, ServiceProfessional, ServiceRequest
 
-    # General stats
-    num_users = Customer.query.count()
-    num_services = Service.query.count()
-    total_bookings = ServiceRequest.query.count()
+    # Fetch general data
+    total_customers = Customer.query.count()
+    active_customers = Customer.query.filter_by(is_blocked=False).count()
+    inactive_customers = total_customers - active_customers
+    total_professionals = ServiceProfessional.query.count()
+    active_professionals = ServiceProfessional.query.filter_by(is_blocked=False).count()
+    inactive_professionals = total_professionals - active_professionals
+    
+    # Fetch request statuses
+    total_requests = ServiceRequest.query.count()
+    accepted_requests = ServiceRequest.query.filter_by(service_status="Accepted").count()
+    pending_requests = ServiceRequest.query.filter_by(service_status="Pending").count()
+    closed_requests = ServiceRequest.query.filter_by(service_status="Completed").count()
+    rejected_requests = ServiceRequest.query.filter_by(service_status="Rejected").count()
+    cancel_requests = ServiceRequest.query.filter_by(service_status="Cancelled").count()
 
-    # Calculate total revenue for completed services
-    total_revenue = (
-        db.session.query(db.func.sum(Service.price))
-        .join(ServiceRequest, Service.service_id == ServiceRequest.service_id)  # Fix here: use service_id
-        .filter(ServiceRequest.service_status == "Completed")
-        .scalar() or 0
-    )
-
-    # Additional metrics
-    blocked_users = Customer.query.filter_by(is_blocked=True).count()
-    approved_professionals = ServiceProfessional.query.filter_by(is_blocked=False).count()
-    num_requested_services = ServiceRequest.query.filter_by(service_status="Pending").count()
-    num_completed_services = ServiceRequest.query.filter_by(service_status="Completed").count()
-
-    # Pass data to the template
+    # Pass the data to the template
     return render_template(
         'admin_overview.html',
-        num_users=num_users,
-        num_services=num_services,
-        total_bookings=total_bookings,
-        total_revenue=total_revenue,
-        blocked_users=blocked_users,
-        approved_professionals=approved_professionals,
-        num_requested_services=num_requested_services,
-        num_completed_services=num_completed_services,
+        total_customers=total_customers,
+        active_customers=active_customers,
+        inactive_customers=inactive_customers,
+        total_professionals=total_professionals,
+        active_professionals=active_professionals,
+        inactive_professionals=inactive_professionals,
+        cancel_requests=cancel_requests,
+        total_requests=total_requests,
+        accepted_requests=accepted_requests,
+        pending_requests=pending_requests,
+        closed_requests=closed_requests,
+        rejected_requests=rejected_requests,
     )
 
 # Professional routes   
@@ -485,6 +492,60 @@ def professional_reviews():
     avg_rating = round(avg_rating, 2) if avg_rating else None
 
     return render_template('professional_reviews.html', reviews=reviews, avg_rating=avg_rating)
+
+@app.route('/professional_overview')
+def professional_overview():
+    from models import ServiceRequest, Review, Service
+    from sqlalchemy import func
+    user_id = session.get('user_id')
+
+    service_data=Service.query.with_entities(Service.name, func.count(ServiceRequest.service_id)).group_by(Service.name).all()
+    service_categories = [item[0] for item in service_data]
+    service_counts = [item[1] for item in service_data]
+
+
+    # Fetch general data
+    total_requests = ServiceRequest.query.filter_by(professional_id=user_id).count()
+    accepted_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Accepted').count()
+    completed_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Completed').count()
+    pending_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Pending').count()
+    rejected_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Rejected').count()
+    cancelled_requests = ServiceRequest.query.filter_by(professional_id=user_id, service_status='Cancelled').count()
+
+    # Fetch average rating
+    avg_rating = Review.query.with_entities(func.avg(Review.rating).label('average')).filter_by(professional_id=user_id).scalar()
+    avg_rating = round(avg_rating, 2) if avg_rating else None
+
+    # Fetch Renevue(service have price)
+    total_revenue = (
+    ServiceRequest.query.join(Service, ServiceRequest.service_id == Service.service_id).filter(
+        ServiceRequest.professional_id == user_id, 
+        ServiceRequest.service_status == 'Completed',
+        Service.price != None
+    )
+    .with_entities(func.sum(Service.price).label('total'))
+    .scalar() or 0
+)
+
+
+    
+
+    # Pass values to the template
+    return render_template(
+        'professional_overview.html',
+        total_requests=total_requests,
+        accepted_requests=accepted_requests,
+        completed_requests=completed_requests,
+        pending_requests=pending_requests,
+        rejected_requests=rejected_requests,
+        cancelled_requests=cancelled_requests,
+        avg_rating=avg_rating,
+        service_categories=service_categories,
+        service_counts=service_counts,
+        total_revenue=total_revenue
+
+    )
+
 
 # Route for logging out
 @app.route('/logout_professional')

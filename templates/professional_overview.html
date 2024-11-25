@@ -1,0 +1,207 @@
+{% extends 'layout.html' %}
+
+{% block title %}Professional Overview{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_reviews') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_overview') }}">Overview</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Professional Overview</h2>
+
+    <!-- Summary Cards -->
+    <div class="row justify-content-center mb-4">
+        <!-- Total Requests -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #3498db;">Total Requests</h5>
+                    <p><strong>Total:</strong> {{ total_requests }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Accepted Requests -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #2ecc71;">Accepted Requests</h5>
+                    <p><strong>Accepted:</strong> {{ accepted_requests }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <!-- Completed Requests -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #f39c12;">Completed Requests</h5>
+                    <p><strong>Completed:</strong> {{ completed_requests }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Pending Requests -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #f1c40f;">Pending Requests</h5>
+                    <p><strong>Pending:</strong> {{ pending_requests }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <!-- Average Rating Card -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #9b59b6;">Average Rating</h5>
+                    <p><strong>Average Rating:</strong> {{ avg_rating }} / 5</p>
+                </div>
+            </div>
+        </div>
+        <!-- Total Revenue Card -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #e74c3c;">Total Revenue</h5>
+                    <p><strong>Total Revenue:</strong> Rs {{ total_revenue }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <!-- Request Status Pie Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg chart-card" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Request Status Breakdown</h5>
+                    <canvas id="requestStatusPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Service Request Breakdown Bar Graph -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg chart-card" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Service Request Breakdown</h5>
+                    <canvas id="serviceRequestBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Bar Chart: Service Request Breakdown
+    const serviceRequestBarChart = new Chart(document.getElementById('serviceRequestBarChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ service_categories | safe }},
+            datasets: [{
+                label: 'Total Requests',
+                data: {{ service_counts | safe }},
+                backgroundColor: [
+                    '#3498db', '#f1c40f', '#2ecc71', '#e74c3c', '#9b59b6', '#27ae60'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    // Pie Chart: Request Status Breakdown
+    const requestStatusPieChart = new Chart(document.getElementById('requestStatusPieChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Accepted', 'Pending', 'Completed', 'Rejected', 'Cancelled'],
+            datasets: [{
+                data: [{{ accepted_requests }}, {{ pending_requests }}, {{ completed_requests }}, {{ rejected_requests }}, {{ cancelled_requests }}],
+                backgroundColor: ['#2ecc71', '#f1c40f', '#3498db', '#e74c3c', '#7f8c8d']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = {{ accepted_requests }} + {{ pending_requests }} + {{ completed_requests }} + {{ rejected_requests }} + {{ cancelled_requests }};
+                            const percentage = ((context.raw / total) * 100).toFixed(2);
+                            return `${context.label}: ${context.raw} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+<style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
+
+</style>
+{% endblock %}

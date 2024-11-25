@@ -3,109 +3,184 @@
 {% block title %}Write Reviews{% endblock %}
 
 {% block content %}
-<!-- Full-Screen Navbar with better contrast and search button -->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
-    <div class="container-fluid">
-        <!-- Strongly Styled Navbar Brand -->
-        <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
-                </li>
-            </ul>
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar with better contrast and search button -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <!-- Strongly Styled Navbar Brand -->
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 400;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                    </li>
+                </ul>
+                <!-- Adding ms-auto to create space between app name and navbar items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- Write Reviews Content -->
-<div class="container mt-4">
-    <h2 class="text-center">Write Reviews for Completed Services</h2>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: bold; color: #2c3e50;">Reviews</h2>
 
     <!-- Pending Reviews Section -->
-    {% if pending_reviews %}
-        <table class="table table-bordered mt-4">
-            <thead>
-                <tr>
-                    <th>Service Name</th>
-                    <th>Serviced By</th>
-                    <th>Rating</th>
-                    <th>Comment</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for service in pending_reviews %}
-                    <tr>
-                        <td>{{ service.service.name }}</td>
-                        <td>{{ service.professional.name }}</td>
-                        <td>
-                            <form action="{{ url_for('submit_review', request_id=service.request_id) }}" method="POST">
-                                <select name="rating" class="form-control" required>
-                                    <option value="5">5 - Excellent</option>
-                                    <option value="4">4 - Good</option>
-                                    <option value="3">3 - Average</option>
-                                    <option value="2">2 - Poor</option>
-                                    <option value="1">1 - Very Poor</option>
-                                </select>
-                        </td>
-                        <td>
-                            <textarea name="comment" class="form-control" rows="2" required></textarea>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Submit Review</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-center">No pending reviews available.</p>
-    {% endif %}
+    <div class="card shadow mb-5" style="border-radius: 15px;">
+        <div class="card-header text-white" style="background-color: #007bff; border-radius: 15px 15px 0 0;">
+            <h4 class="card-title m-0">Pending Reviews</h4>
+        </div>
+        <div class="card-body">
+            {% if pending_reviews %}
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Service Name</th>
+                            <th>Serviced By</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in pending_reviews %}
+                            <tr>
+                                <td>{{ service.request_id }}</td>
+                                <td>{{ service.service.name }}</td>
+                                <td>{{ service.professional.name }}</td>
+                                <td>
+                                    <form action="{{ url_for('submit_review', request_id=service.request_id) }}" method="POST">
+                                        <select name="rating" class="form-select" required>
+                                            <option value="5">5 - Excellent</option>
+                                            <option value="4">4 - Good</option>
+                                            <option value="3">3 - Average</option>
+                                            <option value="2">2 - Poor</option>
+                                            <option value="1">1 - Very Poor</option>
+                                        </select>
+                                </td>
+                                <td>
+                                    <textarea name="comment" class="form-control" rows="2" placeholder="Write your feedback here..." required></textarea>
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center text-muted">No pending reviews available.</p>
+            {% endif %}
+        </div>
+    </div>
 
     <!-- Submitted Reviews Section -->
-    <h2 class="text-center mt-5">Your Submitted Reviews</h2>
-    {% if written_reviews %}
-        <table class="table table-bordered mt-4">
-            <thead>
-                <tr>
-                    <th>Service Name</th>
-                    <th>Serviced By</th>
-                    <th>Rating</th>
-                    <th>Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in written_reviews %}
-                    <tr>
-                        <td>{{ review.service.name }}</td>
-                        <td>{{ review.professional.name }}</td>
-                        <td>{{ review.rating }}</td>
-                        <td>{{ review.comment }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-center">You have not submitted any reviews yet.</p>
-    {% endif %}
+    <div class="card shadow mb-5" style="border-radius: 15px;">
+        <div class="card-header text-white" style="background-color: #28a745; border-radius: 15px 15px 0 0;">
+            <h4 class="card-title m-0">Your Submitted Reviews</h4>
+        </div>
+        <div class="card-body">
+            {% if written_reviews %}
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Service Name</th>
+                            <th>Serviced By</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in written_reviews %}
+                            <tr>
+                                <td>{{ review.request_id }}</td>
+                                <td>{{ review.service.name }}</td>
+                                <td>{{ review.professional.name }}</td>
+                                <td>
+                                    <span class="badge bg-success">{{ review.rating }}</span>
+                                </td>
+                                <td>{{ review.comment }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center text-muted">You have not submitted any reviews yet.</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+<style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
+    .card {
+        border: none;
+    }
+
+    .table th,
+    .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .btn {
+        font-weight: bold;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-select {
+        border-radius: 10px;
+    }
+
+    textarea {
+        border-radius: 10px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+    }
+
+    .badge {
+        font-size: 1rem;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+</style>
 {% endblock %}

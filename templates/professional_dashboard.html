@@ -3,47 +3,72 @@
 {% block title %}Service Professional Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">Service Professional Dashboard</h2>
-    <p class="text-center">Manage your service requests from this panel.</p>
-
-    <div class="row text-center">
-        <!-- View Pending Requests -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow border-info h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">View Pending Requests</h5>
-                    <a href="{{ url_for('professional_pending_requests') }}" class="btn btn-info mt-auto">Manage Requests</a>
-                </div>
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_reviews') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_overview') }}">Overview</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <!-- View Completed Services -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow border-dark h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">View Completed Services</h5>
-                    <a href="{{ url_for('professional_completed_services') }}" class="btn btn-dark mt-auto">View Completed</a>
+    <!-- Dashboard Content -->
+    <div class="container mt-4">
+        <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Welcome to the Service Professional Dashboard</h2>
+        <p class="text-center mb-5" style="font-size: 1.25rem;">Manage your service requests from this panel.</p>
+
+        <!-- Adjusted Grid Layout -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 text-center">
+            <!-- Section: View Pending Requests -->
+            <div class="col">
+                <div class="card shadow-lg border-info h-100" style="border-radius: 15px;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title text-info">View Pending Requests</h5>
+                        <a href="{{ url_for('professional_pending_requests') }}" class="btn btn-info mt-auto" style="border-radius: 25px;">Manage Requests</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- View Reviews Button -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow border-success h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">View Reviews</h5>
-                    <a href="{{ url_for('professional_reviews') }}" class="btn btn-success mt-auto">My Reviews</a>
+            <!-- Section: View Completed Services -->
+            <div class="col">
+                <div class="card shadow-lg border-dark h-100" style="border-radius: 15px;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title text-dark">View Completed Services</h5>
+                        <a href="{{ url_for('professional_completed_services') }}" class="btn btn-dark mt-auto" style="border-radius: 25px;">View Completed</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Logout Button -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow border-danger h-100">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title">Logout</h5>
-                    <a href="{{ url_for('logout_professional') }}" class="btn btn-danger mt-auto">Logout</a>
+            <!-- Section: View Reviews -->
+            <div class="col">
+                <div class="card shadow-lg border-success h-100" style="border-radius: 15px;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title text-success">View Reviews</h5>
+                        <a href="{{ url_for('professional_reviews') }}" class="btn btn-success mt-auto" style="border-radius: 25px;">My Reviews</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,12 +76,31 @@
 </div>
 
 <style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
     .card {
-        transition: transform 0.2s;
-        height: 100%; /* Ensure the cards take full height of the column */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border-radius: 15px;
     }
     .card:hover {
-        transform: scale(1.05);
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    .card-body {
+        padding: 2rem;
     }
 </style>
+
 {% endblock %}

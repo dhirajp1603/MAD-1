@@ -3,33 +3,98 @@
 {% block title %}Pending Approvals{% endblock %}
 
 {% block content %}
-<h2>Pending Professionals for Approval</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Service Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for professional in pending_professionals %}
-        <tr>
-            <td>{{ professional.name }}</td>
-            <td>{{ professional.username }}</td>
-            <td>{{ professional.email }}</td>
-            <td>{{ professional.service_type }}</td>
-            <td>
-                <div class="d-flex justify-content-between">
-                    <a href="{{ url_for('view_professional_profile', id=professional.id) }}" class="btn btn-info">View Profile</a>
-                    <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success">Approve</a>
-                    <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger">Reject</a>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Pending Professionals for Approval</h2>
+    
+    <!-- Table to Display Pending Professionals -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered shadow-sm rounded">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Service Name</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for professional in pending_professionals %}
+                    <tr>
+                        <td>{{ professional.name }}</td>
+                        <td>{{ professional.username }}</td>
+                        <td>{{ professional.email }}</td>
+                        <td>{{ professional.service_type }}</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ url_for('view_professional_profile', id=professional.id) }}" class="btn btn-info btn-sm">
+                                    View Profile
+                                </a>
+                                <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success btn-sm">
+                                    Approve
+                                </a>
+                                <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger btn-sm">
+                                    Reject
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .table {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #343a40;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .table td {
+        font-size: 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-sm {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info, .btn-success, .btn-danger {
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info:hover {
+        background-color: #5bc0de;
+    }
+
+    .btn-success:hover {
+        background-color: #28a745;
+    }
+
+    .btn-danger:hover {
+        background-color: #dc3545;
+    }
+</style>
+
 {% endblock %}

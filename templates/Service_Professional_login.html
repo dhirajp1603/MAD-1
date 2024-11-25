@@ -1,18 +1,62 @@
 {% extends "layout.html" %}
 
-{% block title %}Service Professional Login - Household Services{% endblock %}
+{% block title %}Service Professional Login - FreeHands{% endblock %}
 
 {% block content %}
-    <h2>Service Professional Login</h2>
-    <form action="{{ url_for('login_service_professional') }}" method="POST">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-success">Service Professional <span class="text-orange">Login - FreeHands</span></h1>
+        <p class="lead text-muted"><b>Access your account to manage service requests and keep your profile updated.</b></p>
+        <hr class="my-4">
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-success">
+                <div class="card-body p-5">
+                    <h2 class="text-center text-success mb-4">Professional Login</h2>
+                    <form method="POST" action="{{ url_for('login_service_professional') }}">
+                        <div class="form-group mb-4">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg btn-block">Login</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .card {
+        border-radius: 1.8rem;
+    }
+    .btn-block {
+        width: 100%;
+    }
+    .form-control-lg {
+        border-radius: 0.5rem;
+    }
+    .display-4 {
+        font-size: 3.5rem;
+    }
+    .text-muted {
+        font-size: 1.2rem;
+    }
+    .card-body p {
+        font-size: 1.1rem;
+    }
+    .btn-success {
+        font-size: 1.2rem;
+    }
+    .btn-success:hover {
+        background-color: #28a745;
+    }
+</style>
 {% endblock %}

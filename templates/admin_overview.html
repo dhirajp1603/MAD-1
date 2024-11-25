@@ -1,90 +1,186 @@
 {% extends "layout.html" %}
 
-{% block title %}Platform Overview - Admin Dashboard{% endblock %}
+{% block title %}Platform Overview{% endblock %}
 
 {% block content %}
-<h2>Platform Overview</h2>
-<div class="overview-stats">
-    <p><strong>Total Users:</strong> {{ num_users }}</p>
-    <p><strong>Total Services:</strong> {{ num_services }}</p>
-    <p><strong>Total Bookings:</strong> {{ total_bookings }}</p>
-    <p><strong>Total Revenue:</strong> Rs.{{ total_revenue }}</p>
-    <p><strong>Blocked Users:</strong> {{ blocked_users }}</p>
-    <p><strong>Approved Professionals:</strong> {{ approved_professionals }}</p>
-</div>
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.7rem; font-weight: bold; color: #2c3e50;">Platform Overview</h2>
+    <p class="text-center mb-4 text-muted" style="font-size: 1.3rem;">An insightful dashboard to monitor key platform metrics.</p>
 
-<div class="charts-container">
-    <div id="chart-container" style="width: 48%; display: inline-block; vertical-align: top;">
-        <h3>Platform Activity</h3>
-        <canvas id="user-chart"></canvas>
+    <!-- Summary Cards -->
+    <div class="row justify-content-center mb-4">
+        <!-- Total Customers -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #3498db;">Customers</h5>
+                    <p><strong>Total:</strong> {{ total_customers }}</p>
+                    <p><strong>Active:</strong> {{ active_customers }}</p>
+                    <p><strong>Blocked:</strong> {{ inactive_customers }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Total Professionals -->
+        <div class="col-md-5 mb-3">
+            <div class="card shadow h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #2ecc71;">Professionals</h5>
+                    <p><strong>Total:</strong> {{ total_professionals }}</p>
+                    <p><strong>Active:</strong> {{ active_professionals }}</p>
+                    <p><strong>Blocked:</strong> {{ inactive_professionals }}</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="chart-container" style="width: 48%; display: inline-block; vertical-align: top;">
-        <h3>Bookings & Services</h3>
-        <canvas id="booking-chart"></canvas>
-    </div>
-</div>
 
-<!-- New Section for Additional Data (Number of Requested/Completed Services) -->
-<div class="service-status-charts" style="margin-top: 40px; display: flex; justify-content: space-between;">
-    <div>
-        <h3>Requested Services</h3>
-        <canvas id="requested-services-chart"></canvas>
+    <!-- Requests Summary -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card shadow-lg h-100 summary-card" style="border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #e74c3c;">Requests</h5>
+                    <p><strong>Total:</strong> {{ total_requests }}</p>
+                    <p><strong>Completed:</strong> {{ closed_requests }}</p>
+                    <p><strong>Pending:</strong> {{ pending_requests }}</p>
+                    <p><strong>Accepted:</strong> {{ accepted_requests }}</p>
+                    <p><strong>Rejected:</strong> {{ rejected_requests }}</p>
+                    <p><strong>Cancelled:</strong> {{ cancel_requests }}</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <h3>Completed Services</h3>
-        <canvas id="completed-services-chart"></canvas>
+
+    <!-- Charts Section -->
+    <div class="row justify-content-between">
+        <!-- User Role Bar Chart -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg chart-card" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Users by Role</h5>
+                    <canvas id="userRoleChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Request Status Pie Chart -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-lg chart-card" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Request Status Breakdown</h5>
+                    <canvas id="requestStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // JavaScript for rendering charts with Chart.js
-    const userChart = new Chart(document.getElementById('user-chart'), {
+    // Bar Chart: User Roles
+    const userRoleChart = new Chart(document.getElementById('userRoleChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Customers', 'Service Professionals'],
+            datasets: [{
+                data: [{{ total_customers }}, {{ total_professionals }}],
+                backgroundColor: ['#3498db', '#2ecc71']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let total = {{ total_customers }} + {{ total_professionals }};
+                            let percentage = ((tooltipItem.raw / total) * 100).toFixed(2);
+                            return `${tooltipItem.raw} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    // Pie Chart: Request Status Breakdown
+    const requestStatusChart = new Chart(document.getElementById('requestStatusChart'), {
         type: 'pie',
         data: {
-            labels: ['Active Users', 'Blocked Users'],
+            labels: ['Accepted', 'Pending', 'Completed', 'Rejected'],
             datasets: [{
-                data: [{{ num_users - blocked_users }}, {{ blocked_users }}],
-                backgroundColor: ['#36a2eb', '#ff6384'],
+                data: [{{ accepted_requests }}, {{ pending_requests }}, {{ closed_requests }}, {{ rejected_requests }}],
+                backgroundColor: ['#2ecc71', '#f1c40f', '#3498db', '#e74c3c']
             }]
-        }
-    });
-
-    const bookingChart = new Chart(document.getElementById('booking-chart'), {
-        type: 'bar',
-        data: {
-            labels: ['Bookings', 'Revenue'],
-            datasets: [{
-                label: 'Platform Activity',
-                data: [{{ total_bookings }}, {{ total_revenue }}],
-                backgroundColor: ['#4caf50', '#ffcd56']
-            }]
-        }
-    });
-
-    const requestedServicesChart = new Chart(document.getElementById('requested-services-chart'), {
-        type: 'bar',
-        data: {
-            labels: ['Requested Services'],
-            datasets: [{
-                label: 'Number of Requested Services',
-                data: [{{ num_requested_services }}],
-                backgroundColor: '#ff9f40'
-            }]
-        }
-    });
-
-    const completedServicesChart = new Chart(document.getElementById('completed-services-chart'), {
-        type: 'bar',
-        data: {
-            labels: ['Completed Services'],
-            datasets: [{
-                label: 'Number of Completed Services',
-                data: [{{ num_completed_services }}],
-                backgroundColor: '#4caf50'
-            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let total = {{ accepted_requests }} + {{ pending_requests }} + {{ closed_requests }} + {{ rejected_requests }};
+                            let percentage = ((tooltipItem.raw / total) * 100).toFixed(2);
+                            return `${tooltipItem.label}: ${tooltipItem.raw} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
         }
     });
 </script>
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .summary-card {
+        background: linear-gradient(to bottom, #f9f9f9, #fff);
+    }
+
+    .chart-card {
+        background: linear-gradient(to bottom, #f0f0f0, #fafafa);
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        max-height: 300px;
+    }
+
+    @media (max-width: 768px) {
+        .row {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .summary-card, .chart-card {
+            width: 100%;
+        }
+    }
+</style>
+<!-- Back Button-->
+<div class="text-center mt-3">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+</div>
 
 {% endblock %}

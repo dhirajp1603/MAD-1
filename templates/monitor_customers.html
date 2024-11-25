@@ -3,33 +3,68 @@
 {% block title %}Monitor Customers{% endblock %}
 
 {% block content %}
-    <h2>Monitor Customers</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Customer ID</th>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for customer in customers %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Monitor Customers</h2>
+    <p class="text-center mb-4 text-muted" style="font-size: 1.2rem;">View and manage customer accounts with ease.</p>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark text-center">
                 <tr>
-                    <td>{{ customer.customer_id }}</td>
+                    <th>Customer ID</th>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr class="{% if customer.is_blocked %}table-danger{% else %}table-success{% endif %}">
+                    <td class="text-center">{{ customer.customer_id }}</td>
                     <td>{{ customer.username }}</td>
                     <td>{{ customer.name }}</td>
                     <td>{{ customer.email }}</td>
-                    <td>{{ "Blocked" if customer.is_blocked else "Active" }}</td>
-                    <td>
-                        <a href="{{ url_for('toggle_block', customer_id=customer.customer_id) }}" class="btn btn-warning">
+                    <td class="text-center">
+                        <span class="badge {% if customer.is_blocked %}bg-danger{% else %}bg-success{% endif %}">
+                            {{ "Blocked" if customer.is_blocked else "Active" }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ url_for('toggle_block', customer_id=customer.customer_id) }}" 
+                           class="btn btn-sm {% if customer.is_blocked %}btn-success{% else %}btn-danger{% endif %}">
                             {{ "Unblock" if customer.is_blocked else "Block" }}
                         </a>
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .badge {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+        border-radius: 20px;
+    }
+    .btn {
+        border-radius: 20px;
+        padding: 0.5em 1.5em;
+        font-size: 0.9rem;
+    }
+</style>
 {% endblock %}

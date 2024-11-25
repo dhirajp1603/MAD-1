@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block title %}All Service Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">All Service Requests</h2>
+    <p class="text-center mb-4 text-muted" style="font-size: 1.2rem;">View and manage all service requests.</p>
+
+    {% if service_requests %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Request ID</th>
+                    <th>Customer Name</th>
+                    <th>Service Name</th>
+                    <th>Professional Name</th>
+                    <th>Date of Request</th>
+                    <th>Date of Completion</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in service_requests %}
+                    <tr class="{% if request.service_status == 'Accepted' %}table-info{% elif request.service_status == 'Pending' %}table-warning{% elif request.service_status == 'Completed' %}table-success{% elif request.service_status == 'In Progress' %}table-warning{% else %}table-danger{% endif %}">
+                        <td>{{ request.request_id }}</td>
+                        <td>{{ request.customer.name }}</td>
+                        <td>{{ request.service.name }}</td>
+                        <td>{{ request.professional.name if request.professional_id else 'Not Assigned' }}</td>
+                        <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ request.date_of_completion.strftime('%Y-%m-%d') if request.date_of_completion else 'N/A' }}</td>
+                        <td class="text-center">
+                            <span class="badge {% if request.service_status == 'Accepted' %}bg-info{% elif request.service_status == 'Pending' %}bg-warning{% elif request.service_status == 'Completed' %}bg-success{% elif request.service_status == 'In Progress' %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ request.service_status }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    <!-- Back Button -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .badge {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+        border-radius: 20px;
+    }
+    .btn {
+        border-radius: 20px;
+        padding: 0.5em 1.5em;
+        font-size: 0.9rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+        border-color: #117a8b;
+    }
+</style>
+{% endblock %}

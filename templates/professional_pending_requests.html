@@ -3,41 +3,172 @@
 {% block title %}Pending Service Requests{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">Pending Service Requests</h2>
-    <table class="table table-bordered mt-4">
-        <thead>
-            <tr>
-                <th>Request ID</th>
-                <th>Service ID</th>
-                <th>Customer ID</th>
-                <th>Date of Request</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in pending_requests %}
-            <tr>
-                <td>{{ request.request_id }}</td>
-                <td>{{ request.service_id }}</td>
-                <td>{{ request.customer_id }}</td>
-                <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    <form action="{{ url_for('accept_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-success">Accept</button>
-                    </form>
-                    <form action="{{ url_for('reject_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Reject</button>
-                    </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="5" class="text-center">No pending requests found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_reviews') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_overview') }}">Overview</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container mt-5">
+    <!-- Title -->
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600; color: #2c3e50;">Pending Service Requests</h2>
+
+    <!-- Table for Pending Service Requests -->
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered mt-4" style="font-size: 1.1rem; border-radius: 15px; overflow: hidden;">
+            <thead>
+                <tr style="background-color: #f8f9fa; color: #34495e; font-weight: bold;">
+                    <th class="text-center">Request ID</th>
+                    <th class="text-center">Customer ID</th>
+                    <th class="text-center">Customer Name</th>
+                    <th class="text-center">Date of Request</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in pending_requests %}
+                <tr class="table-row">
+                    <td class="text-center">{{ request.request_id }}</td>
+                    <td class="text-center">{{ request.customer_id }}</td>
+                    <td class="text-center">{{ request.customer.name }}</td>
+                    <td class="text-center">{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
+                    <td class="text-center">
+                        <!-- Action Buttons -->
+                        <form action="{{ url_for('accept_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                        <form action="{{ url_for('reject_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center" style="font-size: 1.2rem; color: #888;">No pending requests found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+    </div>
 </div>
+
+<!-- Styling -->
+<style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
+    .table {
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        transform: scale(1.01);
+    }
+
+    .table thead th {
+        background-color: #343a40;
+        color: #fff;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 15px;
+    }
+
+    .table td {
+        text-align: center;
+        padding: 12px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    /* Success Button */
+    .btn-success {
+        background: linear-gradient(45deg, #28a745, #218838);
+        border: none;
+        color: #fff;
+    }
+
+    .btn-success:hover {
+        background: linear-gradient(45deg, #218838, #1e7e34);
+    }
+
+    /* Danger Button */
+    .btn-danger {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        border: none;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(45deg, #c82333, #bd2130);
+    }
+
+    /* Back Button */
+    .btn-secondary {
+        background: linear-gradient(45deg, #6c757d, #5a6268);
+        border: none;
+        font-size: 1.2rem;
+        padding: 10px 25px;
+        border-radius: 50px;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(45deg, #5a6268, #4e555b);
+    }
+
+    .table-responsive {
+        margin-top: 20px;
+    }
+</style>
 {% endblock %}

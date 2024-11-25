@@ -3,44 +3,169 @@
 {% block title %}My Reviews{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">My Reviews</h2>
-
-    <!-- Display the Average Rating -->
-    {% if avg_rating %}
-        <div class="text-center mt-3">
-            <h4>Average Rating: {{ avg_rating }} / 5</h4>
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem;">EasyHands</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" href="{{ url_for('professional_reviews') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_overview') }}">Overview</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    {% else %}
-        <p class="text-center mt-3">No ratings available yet.</p>
-    {% endif %}
+    </nav>
 
-    <!-- Display the Reviews -->
-    {% if reviews %}
-        <table class="table table-bordered mt-4">
-            <thead>
-                <tr>
-                    <th>Customer ID</th>
-                    <th>Customer Name</th>
-                    <th>Rating</th>
-                    <th>Comment</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in reviews %}
-                <tr>
-                    <td>{{ review.customer.customer_id }}</td>
-                    <td>{{ review.customer.name }}</td>
-                    <td>{{ review.rating }} / 5</td>
-                    <td>{{ review.comment }}</td>
-                    <td>{{ review.date_created.strftime('%Y-%m-%d') }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-center mt-4">You have not received any reviews yet.</p>
-    {% endif %}
+    <div class="container mt-5">
+        <!-- Page Header -->
+        <h2 class="text-center mb-4 text-primary page-header">My Reviews</h2>
+
+        <!-- Display the Average Rating -->
+        {% if avg_rating %}
+            <div class="text-center mb-4">
+                <span class="badge badge-average">⭐ Average Rating: <strong>{{ avg_rating }}</strong> / 5</span>
+            </div>
+        {% else %}
+            <p class="text-center mb-4 no-ratings">No ratings available yet.</p>
+        {% endif %}
+
+        <!-- Display the Reviews -->
+        {% if reviews %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mt-4">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col" class="text-center">Customer ID</th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col" class="text-center">Rating</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col" class="text-center">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in reviews %}
+                    <tr>
+                        <td class="text-center">{{ review.customer.customer_id }}</td>
+                        <td>{{ review.customer.name }}</td>
+                        <td class="text-center">
+                            <span class="badge badge-rating">{{ review.rating }}</span>
+                        </td>
+                        <td>{{ review.comment }}</td>
+                        <td class="text-center">{{ review.date_created.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-center mt-4 no-reviews">You have not received any reviews yet.</p>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="text-center mt-5">
+            <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <style>
+        /* Navbar Enhancements */
+        .navbar {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+        }
+        .navbar-nav .nav-link {
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 15px 25px;
+        }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+        }
+
+        /* Page Header */
+        .page-header {
+            font-size: 2.75rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Badge Styling */
+        .badge-average {
+            font-size: 1.5rem;
+            color: #4CAF50;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+        }
+        .badge-rating {
+            font-size: 0.9rem;
+            color: #fff;
+            background-color: #28a745;
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+        }
+
+        /* Table Styling */
+        .table {
+            font-size: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .table-primary th {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background-color: #343a40;
+            color: #fff;
+        }
+        .table td {
+            text-align: center;
+            padding: 12px;
+        }
+
+        /* No Content Messages */
+        .no-ratings, .no-reviews {
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        /* Button Styling */
+        .btn-back {
+            font-size: 1.1rem;
+            color: #0d6efd;
+            border: 2px solid #0d6efd;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+    </style>
 </div>
 {% endblock %}

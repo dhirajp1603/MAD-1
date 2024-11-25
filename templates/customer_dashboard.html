@@ -3,41 +3,44 @@
 {% block title %}Customer Dashboard{% endblock %}
 
 {% block content %}
-<!-- Full-Screen Navbar with better contrast and search button -->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
-    <div class="container-fluid">
-        <!-- Strongly Styled Navbar Brand -->
-        <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
-                </li>
-            </ul>
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar with better contrast and search button -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <!-- Strongly Styled Navbar Brand -->
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 400;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                    </li>
+                </ul>
+                <!-- Adding ms-auto to create space between app name and navbar items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+
 
 <!-- Customer Dashboard Content -->
 <div class="container mt-4">
-    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Welcome to the Customer Dashboard</h2>
+    <h2 class="text-center mb-4 text-success" style="font-size: 2.25rem;">Welcome to the Customer Dashboard</h2>
     <p class="text-center mb-5" style="font-size: 1.25rem;">Manage your service requests and reviews from this panel.</p>
 
     <!-- Adjusted Grid Layout for Proper Centering -->

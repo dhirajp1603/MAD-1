@@ -3,38 +3,82 @@
 {% block title %}View Service Professionals{% endblock %}
 
 {% block content %}
-    <h2>Service Professionals</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Professional ID</th>
-                <th>Professional Name</th>
-                <th>Service Name</th>
-                <th>Email</th>
-                <th>Experience</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for professional in professionals %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Service Professionals</h2>
+    <p class="text-center mb-4 text-muted" style="font-size: 1.2rem;">View and manage service professionals with ease.</p>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark text-center">
                 <tr>
-                    <td>{{ professional.professional_id }}</td>
+                    <th>Professional ID</th>
+                    <th>Professional Name</th>
+                    <th>Service Name</th>
+                    <th>Email</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for professional in professionals %}
+                <tr class="{% if professional.is_blocked %}table-danger{% else %}table-success{% endif %}">
+                    <td class="text-center">{{ professional.professional_id }}</td>
                     <td>{{ professional.name }}</td>
                     <td>{{ professional.service_type }}</td>
                     <td>{{ professional.email }}</td>
                     <td>{{ professional.experience }} years</td>
-                    <td>{{ "Blocked" if professional.is_blocked else "Active" }}</td>
-                    <td>
+                    <td class="text-center">
+                        <span class="badge {% if professional.is_blocked %}bg-danger{% else %}bg-success{% endif %}">
+                            {{ "Blocked" if professional.is_blocked else "Active" }}
+                        </span>
+                    </td>
+                    <td class="text-center">
                         <form action="{{ url_for('toggle_block_professional', professional_id=professional.professional_id) }}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-{{ 'danger' if not professional.is_blocked else 'success' }}">
-                                {{ "Block" if not professional.is_blocked else "Unblock" }}
+                            <button type="submit" class="btn btn-sm {% if professional.is_blocked %}btn-success{% else %}btn-danger{% endif %}">
+                                {{ "Unblock" if professional.is_blocked else "Block" }}
                             </button>
                         </form>
-                        
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Back Button -->
+<div class="text-center mt-3">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+</div>
+
+<style>
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.5em 0.5em;
+        border-radius: 20px;
+    }
+
+    .btn {
+        border-radius: 20px;
+        padding: 0.5em 0.6em;
+        font-size: 0.9rem;
+    }
+</style>
+
 {% endblock %}

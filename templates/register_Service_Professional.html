@@ -1,53 +1,97 @@
 {% extends "layout.html" %}
 
-{% block title %}Service Professional Registration - Household Services{% endblock %}
+{% block title %}FreeHands - Service Professional Registration{% endblock %}
 
 {% block content %}
-<h2>Service Professional Registration</h2>
-<p>Please fill out the form below to register as a service professional. Your registration will be reviewed by an admin, and you will be notified upon approval.</p>
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-success">Welcome to FreeHands</h1>
+        <p class="lead text-muted"><b>Join FreeHands to offer your expert services and become part of a trusted platform!</b></p>
+        <hr class="my-3">
+    </div>
 
-<form action="{{ url_for('register_service_professional') }}" method="POST">
-    <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" name="username" required>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-success">
+                <div class="card-body p-4">
+                    <h2 class="text-center text-success mb-4">Register as a Service Professional</h2>
+                    <p class="text-center text-muted mb-4">Fill out the form below to join our network of trusted professionals.</p>
+                    <form action="{{ url_for('register_service_professional') }}" method="POST">
+                        <div class="form-group mb-3">
+                            <label for="username" class="form-label">Choose a Username</label>
+                            <input type="text" class="form-control form-control-sm" id="username" name="username" placeholder="Enter a unique username" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Your email address" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="service_type" class="form-label">Service Name</label>
+                            <select class="form-select form-control-sm" id="service_type" name="service_type" required>
+                                <option value="" disabled selected>Select a service type</option>
+                                {% for service in services %}
+                                    <option value="{{ service.service_id }}">{{ service.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="experience" class="form-label">Experience (in years)</label>
+                            <input type="number" class="form-control form-control-sm" id="experience" name="experience" placeholder="Enter your years of experience" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control form-control-sm" id="description" name="description" rows="2" placeholder="Tell us about your skills and expertise"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="pincode" class="form-label">Pincode</label>
+                            <input type="text" class="form-control form-control-sm" id="pincode" name="pincode" placeholder="Enter your location pincode" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password" class="form-label">Create a Password</label>
+                            <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Choose a secure password" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="confirmpassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control form-control-sm" id="confirmpassword" name="confirmpassword" placeholder="Confirm your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm btn-block">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-    </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-    </div>
-    <div class="mb-3">
-        <label for="service_type" class="form-label">Service Name</label>
-        <select class="form-select" id="service_type" name="service_type" required>
-            <option value="" disabled selected>Select a service type</option>
-            {% for service in services %}
-                <option value="{{ service.service_id }}">{{ service.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="experience" class="form-label">Experience (in years)</label>
-        <input type="number" class="form-control" id="experience" name="experience" required>
-    </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="pincode">Pincode</label>
-        <input type="text" class="form-control" id="pincode" name="pincode" required>
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password" required>
-    </div>
-    <div class="mb-3">
-        <label for="confirmpassword" class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .card {
+        border-radius: 1.8rem;
+    }
+    .btn-block {
+        width: 100%;
+    }
+    .form-control-sm {
+        border-radius: 0.4rem;
+        font-size: 0.9rem;
+    }
+    .display-5 {
+        font-size: 3.5rem;
+    }
+    .text-muted {
+        font-size: 1.2rem;
+    }
+    .card-body p {
+        font-size: 1.1rem;
+    }
+    .btn-success {
+        font-size: 1rem;
+    }
+    .btn-success:hover {
+        background-color: #28a745;
+    }
+</style>
 {% endblock %}

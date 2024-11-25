@@ -4,22 +4,22 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center">Available Services</h2>
+    <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: 600;">Available Services</h2>
 
     <div class="row">
         {% for service in services %}
         <div class="col-md-4 mb-4">
-            <div class="card shadow">
+            <div class="card shadow-lg rounded border-light" style="transition: transform 0.3s; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
                 <div class="card-body">
-                    <h5 class="card-title">{{ service.name }}</h5>
-                    <p class="card-text">{{ service.description }}</p>
-                    <p class="card-text">Price: Rs.{{ service.price }}</p>
-                    <p class="card-text">Duration: {{ service.time_required }}</p>
+                    <h5 class="card-title" style="font-size: 1.6rem; font-weight: 600;">{{ service.name }}</h5>
+                    <p class="card-text" style="font-size: 1.1rem;">{{ service.description }}</p>
+                    <p class="card-text"><strong>Price:</strong> Rs.{{ service.price }}</p>
+                    <p class="card-text"><strong>Duration:</strong> {{ service.time_required }}</p>
 
                     <!-- Form with dropdown to select a service professional and description -->
                     <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
-                        <div class="form-group">
-                            <label for="professional">Choose a Service Professional:</label>
+                        <div class="form-group mb-3">
+                            <label for="professional" class="form-label">Choose a Service Professional:</label>
                             <select id="professional" name="professional_id" class="form-control" required>
                                 <option value="">Select a Professional</option>
                                 {% for professional in service.professionals %}
@@ -27,14 +27,11 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <br>
-                        <!-- Description field -->
-                        <div class="form-group">
-                            <label for="description">Description:</label>
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Description:</label>
                             <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter additional details or special instructions" required></textarea>
                         </div>
-                        <br>
-                        <button type="submit" class="btn btn-success">Request Service</button>
+                        <button type="submit" class="btn btn-success mt-3 w-100" style="font-size: 1.1rem; padding: 12px;">Request Service</button>
                     </form>
                 </div>
             </div>
@@ -42,4 +39,54 @@
         {% endfor %}
     </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #343a40;
+    }
+
+    .form-label {
+        font-size: 1rem;
+        color: #495057;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        border-color: #007bff;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+</style>
 {% endblock %}

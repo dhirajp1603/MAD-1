@@ -4,22 +4,78 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center">Professional Profile</h2>
-    <div class="card mt-4">
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600;">Professional Profile</h2>
+    
+    <!-- Profile Card -->
+    <div class="card shadow-lg rounded-lg">
         <div class="card-body">
-            <h4 class="card-title">{{ professional.name }}</h4>
-            <p><strong>Username:</strong> {{ professional.username }}</p>
-            <p><strong>Email:</strong> {{ professional.email }}</p>
-            <p><strong>Service Type:</strong> {{ professional.service_type }}</p>
-            <p><strong>Experience:</strong> {{ professional.experience }} years</p>
-            <p><strong>Description:</strong> {{ professional.description }}</p>
-            <p><strong>Date of Application:</strong> {{ professional.date_created.strftime('%Y-%m-%d') }}</p>
-            <div class="mt-4">
-                <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success">Approve</a>
-                <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger">Reject</a>
-                <a href="{{ url_for('pending_approval_list') }}" class="btn btn-secondary">Back to List</a>
+            <!-- Profile Title -->
+            <h4 class="card-title text-center mb-4" style="font-size: 2rem; font-weight: 600;">{{ professional.name }}</h4>
+            
+            <!-- Profile Details -->
+            <div class="profile-details">
+                <p><strong>Username:</strong> {{ professional.username }}</p>
+                <p><strong>Email:</strong> {{ professional.email }}</p>
+                <p><strong>Service Type:</strong> {{ professional.service_type }}</p>
+                <p><strong>Experience:</strong> {{ professional.experience }} years</p>
+                <p><strong>Description:</strong> {{ professional.description }}</p>
+                <p><strong>Pincode:</strong> {{ professional.pincode }}</p>
+                <p><strong>Date of Application:</strong> {{ professional.date_created.strftime('%Y-%m-%d') }}</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <a href="{{ url_for('approve_professional', id=professional.id) }}" class="btn btn-success btn-lg" style="font-size: 1.1rem; padding: 10px 20px;">Approve</a>
+                <a href="{{ url_for('reject_professional', id=professional.id) }}" class="btn btn-danger btn-lg" style="font-size: 1.1rem; padding: 10px 20px;">Reject</a>
+                <a href="{{ url_for('pending_approval_list') }}" class="btn btn-secondary btn-lg" style="font-size: 1.1rem; padding: 10px 20px;">Back to List</a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .profile-details p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 12px 25px;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-success:hover {
+        background-color: #28a745;
+    }
+
+    .btn-danger:hover {
+        background-color: #dc3545;
+    }
+
+    .btn-secondary:hover {
+        background-color: #6c757d;
+    }
+
+    .btn-lg {
+        font-size: 1.2rem;
+        padding: 15px 30px;
+    }
+</style>
+
 {% endblock %}
