@@ -15,16 +15,6 @@ def generate_professional_id():
         new_id = "PRO1"
     return new_id
 
-def generate_customer_id():
-    from models import Customer, ServiceProfessional  # Import the models here
-    last_customer = Customer.query.order_by(Customer.customer_id.desc()).first()
-    if last_customer:
-        last_id = int(last_customer.customer_id.replace("CUS", ""))
-        new_id = f"CUS{last_id + 1}"
-    else:
-        new_id = "CUS1"
-    return new_id
-
 # Check if user is blocked
 def is_user_blocked(user):
     if user.is_blocked:
@@ -45,32 +35,21 @@ def index():
     flash('Please log in to access the application.', 'info')
     return redirect(url_for('login'))
 
-# Registration and Login page separators
-@app.route("/register")
+# Registration and Login page routes
+@app.route("/register", methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        pass
     return render_template("registerseparator.html")
 
-@app.route("/login")
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        # Handle login form submission for a general user
+        pass  # Add appropriate logic
     return render_template("loginseparator.html")
 
-
-@app.route("/register_service_professional")
-def register_service_professional():
-    from models import Service
-    services = Service.query.all()
-    return render_template("register_Service_Professional.html", services=services)
-
-@app.route("/login_customer")
-def login_customer():
-    return render_template("customer_login.html")
-
-@app.route("/login_service_professional")
-def login_service_professional():
-    return render_template("Service_Professional_login.html")
-
-
-# Customer Registration
 @app.route("/register_customer", methods=['GET', 'POST'])
 def register_customer():
     from models import Customer
@@ -81,15 +60,16 @@ def register_customer():
         name = request.form.get("name")
         email = request.form.get("email")
         
-        if not (username and password and confirmpassword and name):
+        # Validate input fields
+        if not (username and password and confirmpassword and name and email):
             flash("Please fill out all required fields", 'danger')
             return redirect(url_for("register_customer"))
 
         if password != confirmpassword:
-            flash("Password and confirm password do not match", 'danger')
+            flash("Password and Confirm Password do not match", 'danger')
             return redirect(url_for("register_customer"))
         
-        # Check if username or email already exists
+        # Check for existing username or email
         if Customer.query.filter_by(username=username).first() or Customer.query.filter_by(email=email).first():
             flash("Username or Email already exists", 'danger')
             return redirect(url_for("register_customer"))
@@ -97,7 +77,7 @@ def register_customer():
         # Create new customer
         password_hash = generate_password_hash(password)
         new_customer = Customer(
-            customer_id=generate_customer_id(),
+            customer_id=f"CUS{str(Customer.query.count() + 1)}",
             username=username,
             password=password_hash,
             name=name,
@@ -105,86 +85,82 @@ def register_customer():
         )
         db.session.add(new_customer)
         db.session.commit()
+
         flash("Customer registered successfully", 'success')
-        return redirect(url_for("login_customer"))
+        return redirect(url_for("customer_login"))
     
+    # Render registration form for GET request
     return render_template("register_customer.html")
 
-# Running the app
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/register_service_professional", methods=['GET', 'POST'])
+def register_service_professional():
+    from models import Service, PendingApproval
+    services = Service.query.all()
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmpassword = request.form.get("confirmpassword")
+        name = request.form.get("name")
+        email = request.form.get("email")
+        service_type_id = request.form.get("service_type")
+        experience = request.form.get("experience")
+        description = request.form.get("description")
+        pincode = request.form.get("pincode")
 
-# Service Professional Registration
-@app.route("/professionalregister", methods=["POST"])
-def professionalregister_post():
-    from models import ServiceProfessional, Service, PendingApproval
-    username = request.form.get("username")
-    password = request.form.get("password")
-    confirmpassword = request.form.get("confirmpassword")
-    name = request.form.get("name")
-    email = request.form.get("email")
-    service_type_id = request.form.get("service_type")  # This now refers to `service_id` in the dropdown
-    experience = request.form.get("experience")
-    description = request.form.get("description")
+        if not pincode or not pincode.isdigit() or len(pincode) != 6:
+            flash("Invalid Pincode. Please enter a 6-digit number.", "danger")
+            return redirect(url_for("register_service_professional"))
 
-    # Validate form inputs
-    if not (username and password and confirmpassword and name and service_type_id):
-        flash("Please fill out all required fields.", "danger")
-        return redirect(url_for("register_service_professional"))
 
-    if password != confirmpassword:
-        flash("Password and Confirm Password do not match.", "danger")
-        return redirect(url_for("register_service_professional"))
-    
-    # Validate selected service_type_id against the database
-    service = Service.query.filter_by(service_id=service_type_id).first()
-    if not service:
-        flash("Invalid Service Type selected.", "danger")
-        return redirect(url_for("register_service_professional"))
+        if not (username and password and confirmpassword and name and service_type_id and pincode):
+            flash("Please fill out all required fields.", "danger")
+            return redirect(url_for("register_service_professional"))
 
-    # Check for duplicate username or email
-    existing_user = (
-        ServiceProfessional.query.filter_by(username=username).first()
-        or ServiceProfessional.query.filter_by(email=email).first()
-        or PendingApproval.query.filter_by(username=username).first()
-        or PendingApproval.query.filter_by(email=email).first()
-    )
-    if existing_user:
-        flash("Username or Email already exists.", "danger")
-        return redirect(url_for("register_service_professional"))
+        if password != confirmpassword:
+            flash("Password and Confirm Password do not match.", "danger")
+            return redirect(url_for("register_service_professional"))
 
-    # Create new pending approval entry
-    password_hash = generate_password_hash(password)
-    new_pending_professional = PendingApproval(
-        username=username,
-        password=password_hash,
-        name=name,
-        email=email,
-        service_type=service.name,  # Store the valid service ID
-        experience=experience,
-        description=description,
-    )
-    db.session.add(new_pending_professional)
-    db.session.commit()
-    
-    flash("Service Professional registered successfully and is awaiting approval.", "success")
-    return redirect(url_for("login_service_professional"))
+        service = Service.query.filter_by(service_id=service_type_id).first()
+        if not service:
+            flash("Invalid Service Type selected.", "danger")
+            return redirect(url_for("register_service_professional"))
 
-# Customer Login
-@app.route('/customerlogin', methods=['GET', 'POST'])
-def customer_login():  # Make sure this name is consistent
+        existing_user = (
+            PendingApproval.query.filter_by(username=username).first()
+            or PendingApproval.query.filter_by(email=email).first()
+        )
+        if existing_user:
+            flash("Username or Email already exists.", "danger")
+            return redirect(url_for("register_service_professional"))
+
+        new_pending_professional = PendingApproval(
+            username=username,
+            password=generate_password_hash(password),
+            name=name,
+            email=email,
+            service_type=service.name,
+            experience=experience,
+            description=description,
+            pincode=pincode  # Include pincode
+        )
+        db.session.add(new_pending_professional)
+        db.session.commit()
+
+        flash("Service Professional registered successfully and is awaiting approval.", "success")
+        return redirect(url_for("login_service_professional"))
+
+    return render_template("register_Service_Professional.html", services=services)
+
+
+@app.route("/customer_login", methods=['GET', 'POST'])
+def customer_login():
     from models import Customer
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
+
         customer = Customer.query.filter_by(username=username).first()
-
-        if not customer:
-            flash("Incorrect username or password", 'danger')
-            return redirect(url_for("customer_login"))  # Use the correct endpoint name
-
-        if not check_password_hash(customer.password, password):
+        if not customer or not check_password_hash(customer.password, password):
             flash("Incorrect username or password", 'danger')
             return redirect(url_for("customer_login"))
 
@@ -196,29 +172,31 @@ def customer_login():  # Make sure this name is consistent
         flash("Login successful", 'success')
         return redirect(url_for("customer_dashboard"))
 
-    return render_template('customer_login.html')
+    return render_template("customer_login.html")
 
 
-# Service Professional Login
-@app.route('/professionallogin', methods=['POST'])
-def professionallogin_post():
+@app.route("/login_service_professional", methods=['GET', 'POST'])
+def login_service_professional():
     from models import ServiceProfessional
-    username = request.form.get('username')
-    password = request.form.get('password')
-    
-    professional = ServiceProfessional.query.filter_by(username=username).first()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-    if not professional or not check_password_hash(professional.password, password):
-        flash("Incorrect username or password", 'danger')
-        return redirect(url_for("login_service_professional"))
+        professional = ServiceProfessional.query.filter_by(username=username).first()
+        if not professional or not check_password_hash(professional.password, password):
+            flash("Incorrect username or password", 'danger')
+            return redirect(url_for("login_service_professional"))
 
-    if is_user_blocked(professional):
-        flash("Your account is blocked. Contact support.", 'danger')
-        return redirect(url_for("login_service_professional"))
-    
-    session['user_id'] = professional.professional_id
-    flash("Login successful", 'success')
-    return redirect(url_for("professional_dashboard"))
+        if is_user_blocked(professional):
+            flash("Your account is blocked. Contact support.", 'danger')
+            return redirect(url_for("login_service_professional"))
+
+        session['user_id'] = professional.professional_id
+        flash("Login successful", 'success')
+        return redirect(url_for("professional_dashboard"))
+
+    return render_template("Service_Professional_login.html")
+
 
 # Logout
 @app.route("/logout")
@@ -305,7 +283,8 @@ def approve_professional(id):
         email=pending_professional.email,
         service_type=pending_professional.service_type,
         experience=pending_professional.experience,
-        description=pending_professional.description
+        description=pending_professional.description,
+        pincode=pending_professional.pincode
     )
     db.session.add(new_professional)
     db.session.delete(pending_professional)
@@ -363,7 +342,7 @@ def create_service():
     description = request.form.get("description")
     
     new_service = Service(
-        service_id=f"SER{str(Service.query.count() + 1)}",  # Unique service_id
+        service_id=f"SER{str(Service.query.count() + 1)}",
         name=name,
         price=price,
         time_required=time_required,
@@ -501,13 +480,8 @@ def professional_reviews():
         flash("Please log in to view your reviews.", 'danger')
         return redirect(url_for('login'))
 
-    # Fetch reviews for the logged-in professional
     reviews = Review.query.filter_by(professional_id=user_id).all()
-
-    # Calculate average rating for the professional
     avg_rating = Review.query.with_entities(func.avg(Review.rating).label('average')).filter_by(professional_id=user_id).scalar()
-
-    # Round the average rating to 2 decimal places (if any reviews exist)
     avg_rating = round(avg_rating, 2) if avg_rating else None
 
     return render_template('professional_reviews.html', reviews=reviews, avg_rating=avg_rating)
@@ -523,22 +497,18 @@ def logout_professional():
 @app.route('/customer_dashboard')
 def customer_dashboard():
     from models import Service, Review
-    services = Service.query.all()  # Fetch all services
-    customer_id = session.get('customer_id')  # Assuming you're using session
-    reviews = Review.query.filter_by(customer_id=customer_id).all()  # Fetch customer reviews
+    services = Service.query.all()
+    customer_id = session.get('customer_id')
+    reviews = Review.query.filter_by(customer_id=customer_id).all()
     return render_template('customer_dashboard.html', services=services, reviews=reviews)
 
 @app.route('/customer_dashboard/available_services')
 def available_services():
     from models import Service, ServiceProfessional
-    
-    # Fetch all services
     services = Service.query.all()
 
-    # Attach relevant professionals to each service
     for service in services:
         service.professionals = ServiceProfessional.query.filter_by(service_type=service.name).all()
-    
     return render_template('available_services.html', services=services)
 
 # Route to request a service
@@ -608,21 +578,33 @@ def cancel_request(request_id):
 @app.route('/search_professional', methods=['GET', 'POST'])
 def search_professional():
     from models import ServiceProfessional, Review
-    from sqlalchemy import func
     professionals = []
+    service_type = request.form.get('service_type', '')
+    pincode = request.form.get('pincode', '')
 
     if request.method == 'POST':
-        service_type = request.form.get('service_type')
-        professionals = (
-            db.session.query(
-                ServiceProfessional,
-                func.coalesce(func.avg(Review.rating), 0).label('average_rating')
-            )
-            .outerjoin(Review, Review.professional_id == ServiceProfessional.professional_id)
-            .filter(ServiceProfessional.service_type.ilike(f"%{service_type}%"))
-            .group_by(ServiceProfessional.professional_id)
-            .all()
-        )
+        # Build the query
+        query = db.session.query(ServiceProfessional)
+
+        # Join the Review table to calculate the average rating manually
+        query = query.outerjoin(Review, Review.professional_id == ServiceProfessional.professional_id)
+
+        # Filter by service_type if provided
+        if service_type:
+            query = query.filter(ServiceProfessional.service_type.ilike(f"%{service_type}%"))
+
+        # Filter by pincode if provided
+        if pincode:
+            query = query.filter(ServiceProfessional.pincode.ilike(f"%{pincode}%"))
+
+        # Perform the query and calculate the average rating manually
+        professionals = []
+        for professional in query.all():
+            # Manually calculate the average rating for each professional
+            ratings = [review.rating for review in professional.reviews]
+            average_rating = sum(ratings) / len(ratings) if ratings else 0
+
+            professionals.append((professional, average_rating))
 
     return render_template('search_results.html', professionals=professionals)
 
@@ -728,6 +710,7 @@ def submit_review(request_id):
         comment = request.form.get('comment')
 
         review = Review(
+            review_id=f"REV{str(Review.query.count() + 1)}",
             request_id=request_id,  # Keep as string
             service_id=service_request.service_id,
             customer_id=customer_id,

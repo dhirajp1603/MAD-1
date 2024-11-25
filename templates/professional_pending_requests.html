@@ -21,7 +21,7 @@
                 <td>{{ request.request_id }}</td>
                 <td>{{ request.service_id }}</td>
                 <td>{{ request.customer_id }}</td>
-                <td>{{ request.date_of_request.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
                 <td>
                     <form action="{{ url_for('accept_request', request_id=request.request_id) }}" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-success">Accept</button>

@@ -11,32 +11,6 @@ def generate_professional_id():
         new_id = "PRO1"
     return new_id
 
-def generate_customer_id():
-    last_customer = Customer.query.order_by(Customer.customer_id.desc()).first()
-    if last_customer:
-        last_id = int(last_customer.customer_id.replace("CUS", ""))
-        new_id = f"CUS{last_id + 1}"
-    else:
-        new_id = "CUS1"
-    return new_id
-
-def generate_service_id():
-    last_service = Service.query.order_by(Service.service_id.desc()).first()
-    if last_service:
-        last_id = int(last_service.service_id.replace("SER", ""))
-        new_id = f"SER{last_id + 1}"
-    else:
-        new_id = "SER1"
-    return new_id
-
-def generate_review_id():
-    last_review = Review.query.order_by(Review.review_id.desc()).first()
-    if last_review:
-        last_id = int(last_review.review_id.replace("REV", ""))
-        new_id = f"REV{last_id + 1}"
-    else:
-        new_id = "REV1"
-    return new_id
 
 class Admin(db.Model):
     __tablename__ = 'admins'
@@ -56,13 +30,14 @@ class ServiceProfessional(db.Model):
     service_type = db.Column(db.String(100), nullable=False)
     experience = db.Column(db.Integer)
     description = db.Column(db.Text)
+    pincode = db.Column(db.String(10), nullable=False)
     is_blocked = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     reviews = db.relationship('Review', backref='professional', cascade="all, delete-orphan")
 
 class Customer(db.Model):
     __tablename__ = 'customers'
-    customer_id = db.Column(db.String(100), primary_key=True, default=generate_customer_id)
+    customer_id = db.Column(db.String(100), primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     name = db.Column(db.String(100), nullable=False)
@@ -74,7 +49,7 @@ class Customer(db.Model):
 
 class Service(db.Model):
     __tablename__ = 'services'
-    service_id = db.Column(db.String(100), primary_key=True, default=generate_service_id)
+    service_id = db.Column(db.String(100), primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     time_required = db.Column(db.String(50), nullable=False)
@@ -99,7 +74,7 @@ class ServiceRequest(db.Model):
 
 class Review(db.Model):
     __tablename__ = 'reviews'
-    review_id = db.Column(db.String(100), primary_key=True, default=generate_review_id)
+    review_id = db.Column(db.String(100), primary_key=True)
     request_id = db.Column(db.String(100), db.ForeignKey('service_requests.request_id'), nullable=False)
     service_id = db.Column(db.String(100), db.ForeignKey('services.service_id'), nullable=False)
     customer_id = db.Column(db.String(100), db.ForeignKey('customers.customer_id'), nullable=False)
@@ -120,6 +95,7 @@ class PendingApproval(db.Model):
     service_type = db.Column(db.String(100), nullable=False)
     experience = db.Column(db.Integer)
     description = db.Column(db.Text)
+    pincode = db.Column(db.String(10), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
