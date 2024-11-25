@@ -93,11 +93,7 @@ class ServiceRequest(db.Model):
     date_of_completion = db.Column(db.DateTime)
     service_status = db.Column(db.String(50), nullable=False)
     remarks = db.Column(db.Text)
-
-    # Define a one-to-one relationship with Review
     review = db.relationship('Review', backref='related_request', uselist=False, cascade="all, delete-orphan")
-
-    # Relationship with ServiceProfessional
     professional = db.relationship('ServiceProfessional', backref='requests')
 
 
