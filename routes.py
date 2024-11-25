@@ -583,27 +583,17 @@ def search_professional():
     pincode = request.form.get('pincode', '')
 
     if request.method == 'POST':
-        # Build the query
         query = db.session.query(ServiceProfessional)
-
-        # Join the Review table to calculate the average rating manually
         query = query.outerjoin(Review, Review.professional_id == ServiceProfessional.professional_id)
-
-        # Filter by service_type if provided
         if service_type:
             query = query.filter(ServiceProfessional.service_type.ilike(f"%{service_type}%"))
-
-        # Filter by pincode if provided
         if pincode:
             query = query.filter(ServiceProfessional.pincode.ilike(f"%{pincode}%"))
 
-        # Perform the query and calculate the average rating manually
         professionals = []
         for professional in query.all():
-            # Manually calculate the average rating for each professional
             ratings = [review.rating for review in professional.reviews]
             average_rating = sum(ratings) / len(ratings) if ratings else 0
-
             professionals.append((professional, average_rating))
 
     return render_template('search_results.html', professionals=professionals)
