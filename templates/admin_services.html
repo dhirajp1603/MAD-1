@@ -11,7 +11,7 @@
     <form action="{{ url_for('create_service') }}" method="POST" style="display: grid; gap: 10px;">
         <input type="text" name="name" placeholder="Service Name" required style="padding: 8px; width: 100%; box-sizing: border-box;">
         <input type="number" step="0.01" name="price" placeholder="Price" required style="padding: 8px; width: 100%; box-sizing: border-box;">
-        <input type="text" name="time_required" placeholder="Time Required (in hours)" required style="padding: 8px; width: 100%; box-sizing: border-box;">
+        <input type="text" name="time_required" placeholder="Time Required" required style="padding: 8px; width: 100%; box-sizing: border-box;">
         <textarea name="description" placeholder="Description" style="padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
         <button type="submit" style="padding: 8px 12px; background-color: #007bff; color: #fff; cursor: pointer; border: none;">Create Service</button>
     </form>
@@ -39,7 +39,7 @@
                 <td style="padding: 10px; text-align: center;">{{ service.service_id }}</td>
                 <td style="padding: 10px; text-align: center;">{{ service.name }}</td>
                 <td style="padding: 10px; text-align: center;">Rs {{ service.price }}</td>
-                <td style="padding: 10px; text-align: center;">{{ service.time_required }} hour/s</td>
+                <td style="padding: 10px; text-align: center;">{{ service.time_required }}</td>
                 <td style="padding: 10px; text-align: center;">{{ service.description }}</td>
                 <td style="padding: 10px; text-align: center;">
                     <!-- Toggle Update Form Button -->

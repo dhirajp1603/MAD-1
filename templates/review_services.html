@@ -3,6 +3,39 @@
 {% block title %}Write Reviews{% endblock %}
 
 {% block content %}
+<!-- Full-Screen Navbar with better contrast and search button -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+    <div class="container-fluid">
+        <!-- Strongly Styled Navbar Brand -->
+        <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp&nbsp;&nbsp;&nbsp;</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Write Reviews Content -->
 <div class="container mt-4">
     <h2 class="text-center">Write Reviews for Completed Services</h2>
 

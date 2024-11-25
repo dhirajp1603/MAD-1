@@ -35,7 +35,7 @@
     </div>
 </nav>
 
-<!-- Customer Dashboard Content -->
+<!-- Customer Service Content -->
 <div class="container mt-4">
     <h2 class="text-center">My Service Requests</h2>
 
@@ -44,10 +44,9 @@
             <table class="table table-bordered text-center">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Request ID</th>
-                        <th>Service</th>
+                        <th>Service Name</th>
                         <th>Status</th>
-                        <th class="professional-name">Professional Name</th>
+                        <th>Professional Name</th>
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
@@ -55,16 +54,9 @@
                 <tbody>
                     {% for request in requests %}
                         <tr>
-                            <td>{{ request.request_id }}</td>
                             <td>{{ request.service.name }}</td>
                             <td>{{ request.service_status }}</td>
-                            <td class="professional-name">
-                                {% if request.professional %}
-                                    {{ request.professional.name }}
-                                {% else %}
-                                    Not yet assigned
-                                {% endif %}
-                            </td>
+                            <td>{{ request.professional.name }}</td>
                             <td>{{ request.remarks }}</td>
                             <td>
                                 {% if request.service_status == 'Accepted' %}
@@ -133,14 +125,6 @@
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
         cursor: pointer;
-    }
-
-    .professional-name {
-        font-size: 0.85rem; /* Smaller text */
-        width: 150px; /* Set a fixed width */
-        white-space: nowrap; /* Prevent wrapping */
-        overflow: hidden;
-        text-overflow: ellipsis; /* Show ellipsis for overflowed text */
     }
 
     .badge {

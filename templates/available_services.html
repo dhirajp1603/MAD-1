@@ -14,7 +14,7 @@
                     <h5 class="card-title">{{ service.name }}</h5>
                     <p class="card-text">{{ service.description }}</p>
                     <p class="card-text">Price: Rs.{{ service.price }}</p>
-                    <p class="card-text">Duration: {{ service.time_required }} hours</p>
+                    <p class="card-text">Duration: {{ service.time_required }}</p>
 
                     <!-- Form with dropdown to select a service professional and description -->
                     <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        
+                        <br>
                         <!-- Description field -->
                         <div class="form-group">
                             <label for="description">Description:</label>

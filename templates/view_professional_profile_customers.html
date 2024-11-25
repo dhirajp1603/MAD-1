@@ -11,11 +11,10 @@
     <div class="card shadow-lg border-0 mb-4" style="border-radius: 15px;">
         <div class="card-body">
             <h4 class="card-title text-primary fw-bold">{{ professional.name }}</h4>
-            <p class="card-text">Service Type: <span class="text-muted">{{ professional.service_type }}</span></p>
+            <p class="card-text">Service Name: <span class="text-muted">{{ professional.service_type }}</span></p>
             <p class="card-text">Experience: <span class="text-muted">{{ professional.experience }} years</span></p>
             <p class="card-text">Email: <span class="text-muted">{{ professional.email }}</span></p>
-            <p class="card-text">Description:</p>
-            <p class="card-text text-muted">{{ professional.description }}</p>
+            <p class="card-text">Description:<span class="text-muted">{{ professional.description }}</p>
         </div>
     </div>
 
@@ -36,7 +35,7 @@
                             <span class="fw-bold">Comment:</span> "{{ review.comment }}"
                         </p>
                         <p class="card-text text-end text-muted">
-                            - Reviewed by Customer ID: {{ review.customer_id }}
+                            - Reviewed by Customer: {{ review.customer.name }}
                         </p>
                     </div>
                 </div>
