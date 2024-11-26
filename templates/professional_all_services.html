@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container-fluid p-0">
-    <!-- Full-Screen Navbar with similar styling -->
+    <!-- Full-Screen Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
@@ -17,7 +17,7 @@
                         <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                        <a class="nav-link text-white" href="{{ url_for('professional_all_services') }}">Requests</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ url_for('professional_reviews') }}">Reviews</a>
@@ -37,6 +37,7 @@
             </div>
         </div>
     </nav>
+
 
 <div class="container mt-5">
     <!-- Title -->
