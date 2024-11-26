@@ -112,54 +112,15 @@
                 </div>
             </div>
         </div>
-        <!-- Service Request Breakdown Bar Graph -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-lg chart-card" style="border-radius: 15px;">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Service Request Breakdown</h5>
-                    <canvas id="serviceRequestBarChart"></canvas>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
 
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Bar Chart: Service Request Breakdown
-    const serviceRequestBarChart = new Chart(document.getElementById('serviceRequestBarChart'), {
-        type: 'bar',
-        data: {
-            labels: {{ service_categories | safe }},
-            datasets: [{
-                label: 'Total Requests',
-                data: {{ service_counts | safe }},
-                backgroundColor: [
-                    '#3498db', '#f1c40f', '#2ecc71', '#e74c3c', '#9b59b6', '#27ae60'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.raw}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
-                }
-            }
-        }
-    });
+
+
 
     // Pie Chart: Request Status Breakdown
     const requestStatusPieChart = new Chart(document.getElementById('requestStatusPieChart'), {

@@ -499,7 +499,14 @@ def professional_overview():
     from sqlalchemy import func
     user_id = session.get('user_id')
 
-    service_data=Service.query.with_entities(Service.name, func.count(ServiceRequest.service_id)).group_by(Service.name).all()
+    service_data = (
+        ServiceRequest.query
+        .join(Service, ServiceRequest.service_id == Service.service_id)
+        .filter(ServiceRequest.professional_id == user_id)
+        .with_entities(Service.name, func.count(ServiceRequest.service_id))
+        .group_by(Service.name)
+        .all()
+    )
     service_categories = [item[0] for item in service_data]
     service_counts = [item[1] for item in service_data]
 
