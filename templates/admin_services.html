@@ -9,13 +9,13 @@
     <!-- Create New Service Form -->
     <div class="card shadow-lg mb-4">
         <div class="card-body">
-            <h3 class="mb-4" style="color: #007bff;">Create a New Service</h3>
+            <h3 class="mb-4 text-primary">Create a New Service</h3>
             <form action="{{ url_for('create_service') }}" method="POST" class="form-group" style="display: grid; gap: 15px;">
                 <input type="text" name="name" placeholder="Service Name" required class="form-control" style="border-radius: 10px; padding: 6px;">
-                <input type="number" step="0.01" name="price" placeholder="Price (per hour)" required class="form-control" style="border-radius: 10px; padding: 6px;">
-                <input type="text" name="time_required" placeholder="Time Required (in hours)" required class="form-control" style="border-radius: 10px; padding: 6px;">
+                <input type="number" step="100" name="price" placeholder="Price" required class="form-control" style="border-radius: 10px; padding: 6px;">
+                <input type="text" name="time_required" placeholder="Time Required" required class="form-control" style="border-radius: 10px; padding: 6px;">
                 <textarea name="description" placeholder="Description" class="form-control" rows="1" style="border-radius: 10px; padding: 8px;"></textarea>
-                <button type="submit" class="btn btn-primary w-100" style="padding: 6px; font-size: 1.1rem; border-radius: 10px;">Create Service</button>
+                <button type="submit" class="btn btn-primary w-100" style="padding: 10px; font-size: 1.1rem; border-radius: 10px;">Create Service</button>
             </form>
         </div>
     </div>
@@ -25,27 +25,27 @@
     <!-- List of Services with Update/Delete Options -->
     <div class="card shadow-lg">
         <div class="card-body">
-            <h3 class="mb-4" style="color: #007bff;">Existing Services</h3>
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark" style="background-color: #007bff; color: white;">
+            <h3 class="mb-4 text-primary">Existing Services</h3>
+            <table class="table table-striped table-bordered" style="border-radius: 10px; overflow: hidden;">
+                <thead class="thead-dark" style="background-color: #007bff; color: white; text-align: center;vertical-align: middle;">
                     <tr>
-                        <th>Service ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Time Required</th>
-                        <th>Description</th>
-                        <th>Actions</th>
+                        <th style="text-align: center;">Service ID</th>
+                        <th style="text-align: center;">Name</th>
+                        <th style="text-align: center; width: 15%;">Price</th>
+                        <th style="text-align: center;">Time Required</th>
+                        <th style="text-align: center;">Description</th>
+                        <th style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for service in services %}
-                    <tr>
-                        <td>{{ service.service_id }}</td>
-                        <td>{{ service.name }}</td>
-                        <td>Rs {{ service.price }}</td>
-                        <td>{{ service.time_required }} hour/s</td>
-                        <td>{{ service.description }}</td>
-                        <td>
+                    <tr >
+                        <td style="text-align: center;" >{{ service.service_id }}</td>
+                        <td style="text-align: center;" >{{ service.name }}</td>
+                        <td style="text-align: center;" >Rs {{ service.price }}</td>
+                        <td style="text-align: center;" >{{ service.time_required }}</td>
+                        <td style="text-align: center;" >{{ service.description }}</td>
+                        <td style="text-align: center;" >
                             <!-- Edit Button -->
                             <button onclick="toggleUpdateForm('{{ service.service_id }}')" class="btn btn-warning btn-sm" style="border-radius: 10px; transition: 0.3s;">
                                 Edit
@@ -54,7 +54,7 @@
                             <!-- Update Form (Hidden by default) -->
                             <form id="update-form-{{ service.service_id }}" action="{{ url_for('update_service', service_id=service.service_id) }}" method="POST" style="display: none; margin-top: 10px;">
                                 <input type="text" name="name" value="{{ service.name }}" required class="form-control mb-2" style="border-radius: 10px;">
-                                <input type="number" step="0.01" name="price" value="{{ service.price }}" required class="form-control mb-2" style="border-radius: 10px;">
+                                <input type="number" step="100" name="price" value="{{ service.price }}" required class="form-control mb-2" style="border-radius: 10px;">
                                 <input type="text" name="time_required" value="{{ service.time_required }}" required class="form-control mb-2" style="border-radius: 10px;">
                                 <textarea name="description" class="form-control mb-1" rows="1" style="border-radius: 10px;">{{ service.description }}</textarea>
                                 <button type="submit" class="btn btn-success w-100" style="padding: 6px; font-size: 0.8rem; border-radius: 10px;">Update</button>

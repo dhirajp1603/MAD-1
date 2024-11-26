@@ -493,6 +493,13 @@ def professional_reviews():
 
     return render_template('professional_reviews.html', reviews=reviews, avg_rating=avg_rating)
 
+# Route for professional Profile
+@app.route('/professional_profile')
+def professional_profile():
+    from models import ServiceProfessional
+    professional = ServiceProfessional.query.get(session.get('user_id'))
+    return render_template('view_professional_profile.html', professional=professional)
+
 @app.route('/professional_overview')
 def professional_overview():
     from models import ServiceRequest, Review, Service

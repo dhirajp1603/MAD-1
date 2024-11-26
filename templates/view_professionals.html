@@ -12,6 +12,7 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Professional ID</th>
+                    <th>Professional Username</th>
                     <th>Professional Name</th>
                     <th>Service Name</th>
                     <th>Email</th>
@@ -24,6 +25,7 @@
                 {% for professional in professionals %}
                 <tr class="{% if professional.is_blocked %}table-danger{% else %}table-success{% endif %}">
                     <td class="text-center">{{ professional.professional_id }}</td>
+                    <td>{{ professional.username }}</td>
                     <td>{{ professional.name }}</td>
                     <td>{{ professional.service_type }}</td>
                     <td>{{ professional.email }}</td>
