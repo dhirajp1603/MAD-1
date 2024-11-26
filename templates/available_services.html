@@ -14,7 +14,7 @@
                     <h5 class="card-title" style="font-size: 1.6rem; font-weight: 600;">{{ service.name }}</h5>
                     <p class="card-text" style="font-size: 1.1rem;">{{ service.description }}</p>
                     <p class="card-text"><strong>Price:</strong> Rs.{{ service.price }}</p>
-                    <p class="card-text"><strong>Duration:</strong> {{ service.time_required }}</p>
+                    <p class="card-text"><strong>Duration:</strong> {{ service.time_required }} hour/s</p>
 
                     <!-- Form with dropdown to select a service professional and description -->
                     <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
