@@ -1,8 +1,43 @@
 {% extends "layout.html" %}
 
-{% block title %}Professional Profile{% endblock %}
+{% block title %}Completed Services{% endblock %}
 
 {% block content %}
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_pending_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_reviews') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_profile') }}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('professional_overview') }}">Overview</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
 <div class="container mt-5">
     <!-- Profile Heading -->
     <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 700; color: #2c3e50;">Professional Profile</h2>
@@ -34,6 +69,19 @@
 
 <!-- Styling -->
 <style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
     .card {
         border-radius: 15px;
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
