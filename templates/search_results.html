@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 25px;">Search</button>
+                    <button type="submit" class="btn btn-success px-4 py-2" style="border-radius: 25px;">Search</button>
                 </div>
             </form>
         </div>
@@ -65,14 +65,14 @@
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-primary">{{ professional.name }}</h5>
-                    <p class="card-text">Specialization: {{ professional.service_type }}</p>
-                    <p class="card-text">Location: {{ professional.pincode }}</p>
+                    <h5 class="card-title text-dark">{{ professional.name }}</h5>
+                    <p class="card-text">Services: {{ professional.service_type }}</p>
+                    <p class="card-text">Pincode: {{ professional.pincode }}</p>
                     <p class="card-text">
                         Rating: 
                         <span class="badge bg-success">{{ "%.2f"|format(average_rating) }}/5</span>
                     </p>
-                    <a href="{{ url_for('view_professional_profile_customers', professional_id=professional.professional_id) }}" class="btn btn-outline-primary mt-auto" style="border-radius: 20px;">View Profile</a>
+                    <a href="{{ url_for('view_professional_profile_customers', professional_id=professional.professional_id) }}" class="btn btn-outline-success mt-auto" style="border-radius: 20px;">View Profile</a>
                 </div>
             </div>
         </div>
