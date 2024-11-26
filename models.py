@@ -11,6 +11,15 @@ def generate_professional_id():
         new_id = "PRO1"
     return new_id
 
+def generate_service_id():
+    last_service = Service.query.order_by(Service.service_id.desc()).first()
+    if last_service:
+        last_id = int(last_service.service_id.replace("SER", ""))
+        new_id = f"SER{last_id + 1}"
+    else:
+        new_id = "SER1"
+    return new_id
+
 
 class Admin(db.Model):
     __tablename__ = 'admins'
@@ -49,7 +58,7 @@ class Customer(db.Model):
 
 class Service(db.Model):
     __tablename__ = 'services'
-    service_id = db.Column(db.String(100), primary_key=True)
+    service_id = db.Column(db.String(100), primary_key=True, default=generate_service_id)
     name = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     time_required = db.Column(db.String(50), nullable=False)

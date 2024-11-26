@@ -91,12 +91,18 @@
     {% endif %}
 </div>
 
+
 <script>
     function toggleUpdateForm(requestId) {
         const form = document.getElementById('update-form-' + requestId);
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 </script>
+
+<!-- Back Button-->
+<div class="container mt-4">
+    <a href="{{ url_for('customer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
 
 <style>
     .navbar {

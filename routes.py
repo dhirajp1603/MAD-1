@@ -332,6 +332,16 @@ def view_services():
     services = Service.query.all()
     return render_template('admin_services.html', services=services)
 
+def generate_service_id():
+    from models import Service
+    last_service = Service.query.order_by(Service.service_id.desc()).first()
+    if last_service:
+        last_id = int(last_service.service_id.replace("SER", ""))
+        new_id = f"SER{last_id + 1}"
+    else:
+        new_id = "SER1"
+    return new_id
+
 # Route to create a new service
 @app.route('/admin/service/create', methods=['POST'])
 def create_service():
@@ -342,7 +352,7 @@ def create_service():
     description = request.form.get("description")
     
     new_service = Service(
-        service_id=f"SER{str(Service.query.count() + 1)}",
+        service_id=generate_service_id(),
         name=name,
         price=price,
         time_required=time_required,
