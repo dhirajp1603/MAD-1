@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
-{% block title %}Completed Services{% endblock %}
+{% block title %}All Services{% endblock %}
 
 {% block content %}
 <div class="container-fluid p-0">
-    <!-- Full-Screen Navbar -->
+    <!-- Full-Screen Navbar with similar styling -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 700;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
@@ -40,9 +40,9 @@
 
 <div class="container mt-5">
     <!-- Title -->
-    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600; color: #2c3e50;">Completed Services</h2>
+    <h2 class="text-center mb-4" style="font-size: 2.5rem; font-weight: 600; color: #2c3e50;">All Services</h2>
 
-    <!-- Table for Completed Services -->
+    <!-- Table for All Services -->
     <div class="table-responsive">
         <table class="table table-striped table-bordered mt-4" style="font-size: 1.1rem; border-radius: 15px; overflow: hidden;">
             <thead>
@@ -51,23 +51,27 @@
                     <th class="text-center">Customer ID</th>
                     <th class="text-center">Customer Name</th>
                     <th class="text-center">Service Name</th>
+                    <th class="text-center">Service Status</th>
                     <th class="text-center">Date of Request</th>
-                    <th class="text-center">Date of Completion</th>
                 </tr>
             </thead>
             <tbody>
-                {% for request, customer_name, service_name in completed_requests %}
-                <tr class="table-row">
+                {% for request, customer_name, service_name in services %}
+                <tr class="{% if request.service_status == 'Completed' %}table-success{% elif request.service_status == 'Accepted' %}table-info{% elif request.service_status == 'Pending' %}table-warning{% else %}table-danger{% endif %}">
                     <td class="text-center">{{ request.request_id }}</td>
                     <td class="text-center">{{ request.customer_id }}</td>
                     <td>{{ customer_name }}</td>
                     <td>{{ service_name }}</td>
+                    <td class="text-center">
+                        <span class="badge {% if request.service_status == 'Completed' %}bg-success{% elif request.service_status == 'Accepted' %}bg-info{% elif request.service_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                            {{ request.service_status }}
+                        </span>
+                    </td>
                     <td class="text-center">{{ request.date_of_request.strftime('%Y-%m-%d') }}</td>
-                    <td class="text-center">{{ request.date_of_completion.strftime('%Y-%m-%d') }}</td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" class="text-center" style="font-size: 1.2rem; color: #888;">No completed services found.</td>
+                    <td colspan="6" class="text-center" style="font-size: 1.2rem; color: #888;">No services found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -76,7 +80,7 @@
 
     <!-- Back Button -->
     <div class="text-center mt-4">
-        <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary btn-lg"style="border-radius: 25px;">Back to Dashboard</a>
+        <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary btn-lg" style="border-radius: 25px;">Back to Dashboard</a>
     </div>
 </div>
 
@@ -127,7 +131,6 @@
     }
 
     .btn-primary {
-
         border: none;
         font-size: 1.2rem;
         padding: 12px 30px;

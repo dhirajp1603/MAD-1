@@ -56,13 +56,13 @@
             </thead>
             <tbody>
                 {% for request in requests %}
-                    <tr class="{% if request.service_status == 'Accepted' %}table-success{% elif request.service_status == 'Pending' %}table-warning{% else %}table-danger{% endif %}">
+                    <tr class="{% if request.service_status == 'Completed' %}table-success{% elif request.service_status == 'Accepted' %}table-info{% elif request.service_status == 'Pending' %}table-warning{% else %}table-danger{% endif %}">
                         <td>{{ request.request_id }}</td>
                         <td>{{ request.service.name }}</td>
                         <td>{{ request.professional.name }}</td>
                         <td>{{ request.remarks }}</td>
                         <td class="text-center">
-                            <span class="badge {% if request.service_status == 'Accepted' %}bg-success{% elif request.service_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                            <span class="badge {% if request.service_status == 'Completed' %}bg-success{% elif request.service_status == 'Accepted' %}bg-info{% elif request.service_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
                                 {{ request.service_status }}
                             </span>
                         </td>
@@ -73,13 +73,13 @@
                                 </form>
                             {% endif %}
                             {% if request.service_status == 'Pending' %}
-                                <button onclick="toggleUpdateForm('{{ request.request_id }}')" class="btn btn-primary btn-sm">Update Request</button>
+                                <button onclick="toggleUpdateForm('{{ request.request_id }}')" class="btn btn-primary btn-sm">Update</button>
                                 <form id="update-form-{{ request.request_id }}" action="{{ url_for('update_request', request_id=request.request_id) }}" method="post" style="display: none;">
                                     <textarea name="remarks" class="form-control" rows="3" placeholder="Enter additional details or special instructions" required></textarea>
                                     <button type="submit" class="btn btn-info btn-sm mt-2">Update</button>
                                 </form>
                                 <form action="{{ url_for('cancel_request', request_id=request.request_id) }}" method="post">
-                                    <button type="submit" class="btn btn-danger btn-sm">Cancel Request</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
                                 </form>
                             {% endif %}
                         </td>

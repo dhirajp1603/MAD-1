@@ -3,35 +3,74 @@
 {% block title %}Available Services{% endblock %}
 
 {% block content %}
+<div class="container-fluid p-0">
+    <!-- Full-Screen Navbar with better contrast and search button -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333;">
+        <div class="container-fluid">
+            <!-- Strongly Styled Navbar Brand -->
+            <a class="navbar-brand fw-bold text-white" href="#" style="font-size: 2rem; font-weight: 400;">EasyHands&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('customer_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('view_customer_requests') }}">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('review_services') }}">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('search_professional') }}">Search</a>
+                    </li>
+                </ul>
+                <!-- Adding ms-auto to create space between app name and navbar items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
 <div class="container mt-4">
     <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: 600;">Available Services</h2>
 
-    <div class="row">
+    <!-- Horizontal Cards Layout -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-1 g-4">
         {% for service in services %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-lg rounded border-light" style="transition: transform 0.3s; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-                <div class="card-body">
-                    <h5 class="card-title" style="font-size: 1.6rem; font-weight: 600;">{{ service.name }}</h5>
-                    <p class="card-text" style="font-size: 1.1rem;">{{ service.description }}</p>
-                    <p class="card-text"><strong>Price:</strong> Rs.{{ service.price }}</p>
-                    <p class="card-text"><strong>Duration:</strong> {{ service.time_required }} hour/s</p>
+        <div class="col">
+            <div class="card shadow-lg rounded border-light h-90 d-flex flex-row" style="max-width: 1000px; margin: 0 auto; max-height: 300px; overflow: hidden;">
+                <div class="card-body d-flex flex-column justify-content-between w-50 p-2" style="flex: 1;">
+                    <p class="card-title" style="font-size: 1.4rem; font-weight: 500;"><strong>Service ID:</strong> {{ service.service_id }}</p>
+                    <p class="card-title" style="font-size: 1.2rem; font-weight: 400;"><strong>Service:</strong> {{ service.name }}</p>
+                    <p class="card-text" style="font-size: 1rem; height: 45px; overflow: hidden;">{{ service.description }}</p>
+                    <p class="card-text" style="font-size: 1rem;"><strong>Price:</strong> Rs.{{ service.price }}</p>
+                    <p class="card-text" style="font-size: 1rem; margin-bottom: 10px;"><strong>Duration:</strong> {{ service.time_required }} hour/s</p>
+                </div>
 
-                    <!-- Form with dropdown to select a service professional and description -->
+                <!-- Service Request Form -->
+                <div class="card-body d-flex flex-column justify-content-between w-50 bg-light p-2" style="flex: 1;">
+                    <h6 class="mb-3" style="font-size: 1.2rem; font-weight: 600;">Request This Service</h6>
                     <form action="{{ url_for('request_service', service_id=service.service_id) }}" method="POST">
-                        <div class="form-group mb-3">
-                            <label for="professional" class="form-label">Choose a Service Professional:</label>
-                            <select id="professional" name="professional_id" class="form-control" required>
+                        <div class="mb-2">
+                            <label for="professional" class="form-label" style="font-size: 0.9rem;">Choose a Service Professional:</label>
+                            <select id="professional" name="professional_id" class="form-control form-control-sm" required>
                                 <option value="">Select a Professional</option>
                                 {% for professional in service.professionals %}
                                 <option value="{{ professional.professional_id }}">{{ professional.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="description" class="form-label">Description:</label>
-                            <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter additional details or special instructions" required></textarea>
+                        <div class="mb-2">
+                            <label for="description" class="form-label" style="font-size: 0.9rem;">Description:</label>
+                            <textarea id="description" name="description" class="form-control form-control-sm" rows="1.5" placeholder="Enter additional details" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success mt-3 w-100" style="font-size: 1.1rem; padding: 12px;">Request Service</button>
+                        <button type="submit" class="btn btn-success w-100 btn-sm" style="font-size: 1rem; padding: 5px;">Request Service</button>
                     </form>
                 </div>
             </div>
@@ -41,32 +80,51 @@
 </div>
 
 <style>
+    .navbar {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 15px 25px;
+    }
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+    }
     .card {
         border-radius: 15px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        margin-bottom: 20px;
     }
 
     .card:hover {
-        transform: scale(1.05);
+        transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
+    .card-body {
+        padding: 1rem;
+    }
+
     .card-title {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         font-weight: bold;
         color: #343a40;
     }
 
     .form-label {
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: #495057;
     }
 
     .form-control {
         border-radius: 10px;
-        font-size: 1rem;
-        padding: 10px;
+        font-size: 0.9rem;
+        padding: 2px;
     }
 
     .form-control:focus {
@@ -74,19 +132,53 @@
         border-color: #007bff;
     }
 
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 8px;
+        font-size: 1rem;
+        border-radius: 10px;
         transition: background-color 0.3s, border-color 0.3s;
     }
 
-    .btn-success:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
     }
 
-    .card-body {
-        padding: 1.5rem;
+    /* Horizontal Card Layout */
+    .d-flex.flex-row {
+        flex-direction: row;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 0.8rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+        }
+
+        .form-control {
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            font-size: 0.9rem;
+        }
+
+        .d-flex.flex-row {
+            flex-direction: column;
+        }
+
+        .card {
+            max-width: 100%;
+        }
     }
 </style>
+
 {% endblock %}
