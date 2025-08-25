@@ -1,6 +1,6 @@
-# EasyHands - Multi-User Household Service App
+# FreeHands - Multi-User Household Service App
 
-EasyHands serves as a platform for connecting service professionals with customers seeking various household services. This application streamlines the process of booking, managing, and tracking services while providing tools for professionals and administrators to ensure efficient operations.
+FreeHands serves as a platform for connecting service professionals with customers seeking various household services. This application streamlines the process of booking, managing, and tracking services while providing tools for professionals and administrators to ensure efficient operations.
 
 ---
 
